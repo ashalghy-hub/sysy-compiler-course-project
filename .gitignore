@@ -1,0 +1,30 @@
+# 本地课程资料与提取中间文件
+/项目资料/
+/tmp/
+
+# 编译产物
+/build/
+/output/
+*.o
+*.a
+*.so
+*.exe
+*.out
+
+# LaTeX 中间产物；最终 PDF 可按需要提交
+*.aux
+*.log
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# 本地设置和凭据
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+/.idea/
