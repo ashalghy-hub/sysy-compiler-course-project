@@ -1,0 +1,47 @@
+== 各阶段产物行数汇总（2026-10-06 19:03:19）==
+
+[fact.cpp]
+    17 /home/ddn/biany/prep/src/fact.cpp
+ 30194 /home/ddn/biany/prep/stages/fact/fact.i
+   111 /home/ddn/biany/prep/stages/fact/fact.ll
+   133 /home/ddn/biany/prep/stages/fact/fact_gcc_x86.s
+   113 /home/ddn/biany/prep/stages/fact/fact_clang_x86.s
+   156 /home/ddn/biany/prep/stages/fact/fact_rv64.s
+ 30724 total
+
+[fib.cpp]
+    22 /home/ddn/biany/prep/src/fib.cpp
+ 30199 /home/ddn/biany/prep/stages/fib/fib.i
+   124 /home/ddn/biany/prep/stages/fib/fib.ll
+   155 /home/ddn/biany/prep/stages/fib/fib_gcc_x86.s
+   130 /home/ddn/biany/prep/stages/fib/fib_clang_x86.s
+   177 /home/ddn/biany/prep/stages/fib/fib_rv64.s
+ 30807 total
+
+== 优化级别对比（行数）==
+
+[fact] LLVM IR:
+  111 /home/ddn/biany/prep/opt_compare/fact_O0.ll
+  163 /home/ddn/biany/prep/opt_compare/fact_O1.ll
+  250 /home/ddn/biany/prep/opt_compare/fact_O2.ll
+  152 /home/ddn/biany/prep/opt_compare/fact_Os.ll
+  676 total
+[fact] RISC-V 汇编:
+ 156 /home/ddn/biany/prep/opt_compare/fact_rv64_O0.s
+  97 /home/ddn/biany/prep/opt_compare/fact_rv64_O1.s
+ 146 /home/ddn/biany/prep/opt_compare/fact_rv64_O2.s
+  89 /home/ddn/biany/prep/opt_compare/fact_rv64_Os.s
+ 488 total
+
+[fib] LLVM IR:
+  124 /home/ddn/biany/prep/opt_compare/fib_O0.ll
+  248 /home/ddn/biany/prep/opt_compare/fib_O1.ll
+  247 /home/ddn/biany/prep/opt_compare/fib_O2.ll
+  153 /home/ddn/biany/prep/opt_compare/fib_Os.ll
+  772 total
+[fib] RISC-V 汇编:
+  177 /home/ddn/biany/prep/opt_compare/fib_rv64_O0.s
+  156 /home/ddn/biany/prep/opt_compare/fib_rv64_O1.s
+  231 /home/ddn/biany/prep/opt_compare/fib_rv64_O2.s
+  118 /home/ddn/biany/prep/opt_compare/fib_rv64_Os.s
+  682 total

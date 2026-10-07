@@ -1,0 +1,603 @@
+% -*- coding: utf-8 -*-
+%-------------------------designed by zcf--------------
+\documentclass[UTF8,a4paper,10pt]{ctexart}
+\usepackage[left=3.17cm, right=3.17cm, top=2.74cm, bottom=2.74cm]{geometry}
+\usepackage{amsmath}
+\usepackage{graphicx,subfig}
+\usepackage{float}
+\usepackage{cite}
+\usepackage{caption}
+\usepackage{enumerate}
+\usepackage{booktabs} %表格
+\usepackage{multirow}
+\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}  %表格强制换行
+%-------------------------字体设置--------------
+% \usepackage{times} 
+\usepackage{ctex}
+\setCJKmainfont[ItalicFont=Noto Sans CJK SC Bold, BoldFont=Noto Serif CJK SC Black]{Noto Serif CJK SC}
+\newcommand{\yihao}{\fontsize{26pt}{36pt}\selectfont}           % 一号, 1.4 倍行距
+\newcommand{\erhao}{\fontsize{22pt}{28pt}\selectfont}          % 二号, 1.25倍行距
+\newcommand{\xiaoer}{\fontsize{18pt}{18pt}\selectfont}          % 小二, 单倍行距
+\newcommand{\sanhao}{\fontsize{16pt}{24pt}\selectfont}  %三号字
+\newcommand{\xiaosan}{\fontsize{15pt}{22pt}\selectfont}        % 小三, 1.5倍行距
+\newcommand{\sihao}{\fontsize{14pt}{21pt}\selectfont}            % 四号, 1.5 倍行距
+\newcommand{\banxiaosi}{\fontsize{13pt}{19.5pt}\selectfont}    % 半小四, 1.5倍行距
+\newcommand{\xiaosi}{\fontsize{12pt}{18pt}\selectfont}            % 小四, 1.5倍行距
+\newcommand{\dawuhao}{\fontsize{11pt}{11pt}\selectfont}       % 大五号, 单倍行距
+\newcommand{\wuhao}{\fontsize{10.5pt}{15.75pt}\selectfont}    % 五号, 单倍行距
+%-------------------------章节名----------------
+\usepackage{ctexcap} 
+\CTEXsetup[name={,、},number={ \chinese{section}}]{section}
+\CTEXsetup[name={（,）},number={\chinese{subsection}}]{subsection}
+\CTEXsetup[name={,.},number={\arabic{subsubsection}}]{subsubsection}
+%-------------------------页眉页脚--------------
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{\kaishu \leftmark}
+% \chead{}
+\rhead{\kaishu 编译原理实验报告}%加粗\bfseries 
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+\renewcommand{\headrulewidth}{0.1pt}  
+\renewcommand{\footrulewidth}{0pt}%去掉横线
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}%标题横线
+\newcommand{\HRulegrossa}{\rule{\linewidth}{1.2mm}}
+%-----------------------伪代码------------------
+\usepackage{algorithm}  
+\usepackage{algorithmicx}  
+\usepackage{algpseudocode}  
+\floatname{algorithm}{Algorithm}  
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}  
+\renewcommand{\algorithmicensure}{\textbf{Output:}} 
+\usepackage{lipsum}  
+\makeatletter
+\newenvironment{breakablealgorithm}
+  {% \begin{breakablealgorithm}
+  \begin{center}
+     \refstepcounter{algorithm}% New algorithm
+     \hrule height.8pt depth0pt \kern2pt% \@fs@pre for \@fs@ruled
+     \renewcommand{\caption}[2][\relax]{% Make a new \caption
+      {\raggedright\textbf{\ALG@name~\thealgorithm} ##2\par}%
+      \ifx\relax##1\relax % #1 is \relax
+         \addcontentsline{loa}{algorithm}{\protect\numberline{\thealgorithm}##2}%
+      \else % #1 is not \relax
+         \addcontentsline{loa}{algorithm}{\protect\numberline{\thealgorithm}##1}%
+      \fi
+      \kern2pt\hrule\kern2pt
+     }
+  }{% \end{breakablealgorithm}
+     \kern2pt\hrule\relax% \@fs@post for \@fs@ruled
+  \end{center}
+  }
+\makeatother
+%------------------------代码-------------------
+\usepackage{xcolor} 
+\usepackage{listings} 
+\lstset{ 
+breaklines,%自动换行
+basicstyle=\small,
+escapeinside=``,
+keywordstyle=\color{ blue!70} \bfseries,
+commentstyle=\color{red!50!green!50!blue!50},% 
+stringstyle=\ttfamily,% 
+extendedchars=false,% 
+linewidth=\textwidth,% 
+numbers=left,% 
+numberstyle=\tiny \color{blue!50},% 
+frame=trbl% 
+rulesepcolor= \color{ red!20!green!20!blue!20} 
+}
+%------------超链接----------
+\usepackage[colorlinks,linkcolor=black,anchorcolor=blue]{hyperref}
+%------------------------TODO-------------------
+\usepackage{enumitem,amssymb}
+\newlist{todolist}{itemize}{2}
+\setlist[todolist]{label=$\square$}
+% for check symbol 
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\done}{\rlap{$\square$}{\raisebox{2pt}{\large\hspace{1pt}\cmark}}\hspace{-2.5pt}}
+\newcommand{\wontfix}{\rlap{$\square$}{\large\hspace{1pt}\xmark}}
+%------------------------水印-------------------
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{eso-pic}
+
+\newcommand{\watermark}[3]{\AddToShipoutPictureBG{
+\parbox[b][\paperheight]{\paperwidth}{
+\vfill%
+\centering%
+\tikz[remember picture, overlay]%
+  \node [rotate = #1, scale = #2] at (current page.center)%
+    {\textcolor{gray!80!cyan!30!magenta!30}{#3}};
+\vfill}}}
+
+
+
+%———————————————————————————————————————————正文———————————————————————————————————————————————
+%----------------------------------------------
+\begin{document}
+\begin{titlepage}
+    \begin{center}
+    \includegraphics[width=0.8\textwidth]{NKU.png}\\[1cm]    
+    \textsc{\Huge \kaishu{\textbf{南\ \ \ \ \ \ 开\ \ \ \ \ \ 大\ \ \ \ \ \ 学}} }\\[0.9cm]
+    \textsc{\huge \kaishu{\textbf{计\ \ 算\ \ 机\ \ 学\ \ 院}}}\\[0.5cm]
+    \textsc{\Large \textbf{编译原理上机实验报告}}\\[0.8cm]
+    \HRule \\[0.9cm]
+    { \LARGE \bfseries 预备工作：了解你的编译器、LLVM IR 与汇编编程}\\[0.4cm]
+    \HRule \\[2.0cm]
+    \centering
+    \textsc{\LARGE \kaishu{姓名\ :\ 张龙飞、袁煜杰}}\\[0.5cm]
+    \textsc{\LARGE \kaishu{学号\ :\ 2413625、2412303}}\\[0.5cm]
+    \textsc{\LARGE \kaishu{专业\ :\ 计算机科学与技术}}\\[0.5cm]
+    \vfill
+    {\Large \today}
+    \end{center}
+\end{titlepage}
+%-------------摘------要--------------
+\newpage
+\thispagestyle{empty}
+\renewcommand{\abstractname}{\kaishu \sihao \textbf{摘要}}
+    \begin{abstract}
+        % 【待补全】摘要正文：概述本次预备工作的目的、内容、方法与结果。
+        % 要点提示：以 GCC/LLVM(Clang) 为研究对象，利用命令行选项获得预处理、编译、
+        % 汇编、链接各阶段的输出，分析其与源程序的关系；设计覆盖 SysY 语言特性的
+        % 示例程序，手写等价的 LLVM IR 与 RISC-V 汇编程序，链接 SysY 运行时库并
+        % 在 QEMU 模拟器上验证运行结果，为后续 SysY 编译器的实现奠定基础。
+        【待补全：摘要正文】
+
+        \noindent  %顶格
+        \textbf{\\\ 关键字：编译器；LLVM IR；RISC-V 汇编；SysY；链接}\textbf{} \\\ \\\
+    \end{abstract}
+%----------------------------------------------------------------
+\tableofcontents
+%----------------------------------------------------------------
+\newpage
+\watermark{60}{10}{NKU}
+\setcounter{page}{1}
+
+%==================================================================
+\section{引言}
+%==================================================================
+
+\subsection{实验背景与目的}
+% 【待补全】用自己的话概述，可包含以下要点：
+SysY 是全国大学生编译系统设计赛定义的简化 C 语言。本课程上机大作业要求实现一个
+SysY 编译器（词法分析、语法分析、类型检查与中间代码生成、代码优化、目标代码生成），
+目标平台为 RISC-V。本次预备工作是上机大作业的第一个模块，目的在于：
+\begin{enumerate}
+  \item 以 GCC / LLVM(Clang) 为研究对象，深入探究语言处理系统的完整工作过程，
+        理解预处理器、编译器（前端与后端各阶段）、汇编器、链接器的功能；
+  \item 熟悉 LLVM IR 中间语言与 RISC-V 汇编语言，
+        设计覆盖 SysY 语言特性的示例程序，手写等价的 LLVM IR 与 RISC-V 汇编程序，
+        链接 SysY 运行时库并验证运行结果的正确性；
+  \item 为后续词法分析器、语法分析器、中间代码生成与目标代码生成等模块的实现
+        建立直观认识与技术储备。
+\end{enumerate}
+
+\subsection{实验环境（张龙飞）}
+本实验在 WSL2（Windows Subsystem for Linux）中进行，使用 QEMU 用户态模拟器
+运行 RISC-V 目标程序。主要工具及版本如表\ref{tab:env}所示。
+
+\begin{table}[!htbp]
+  \centering
+  \begin{tabular}{ll}
+  \toprule
+  项目 & 版本 / 说明\\
+  \midrule
+  操作系统 & WSL2：Ubuntu 22.04.5 LTS（x86\_64）\\
+  GCC / G++ & 11.4.0\\
+  Clang / LLVM 工具链 & 14.0.0（含 llvm-as、lli、llc、opt、llvm-dis）\\
+  Flex / Bison & 2.6.4 / 3.8.2\\
+  RISC-V 交叉工具链 & riscv64-linux-gnu-gcc / g++ 11.4.0\\
+  模拟器 & QEMU 7.0.0（qemu-riscv64 用户态模式，/opt/qemu 源码编译）\\
+  \bottomrule
+  \end{tabular}
+  \caption{实验环境与工具版本}
+  \label{tab:env}
+\end{table}
+\subsection{实验环境（袁煜杰）}
+\begin{itemize}
+\item 待填写
+\end{itemize}
+
+
+\subsection{小组分工}
+% 【待补全】按 PPT 要求：小题一两人独立完成；小题二的两个任务两人各负责一个；
+% 其余部分共同撰写。报告开始处须描述清楚两人分工。
+本实验由两人合作完成，分工如表\ref{tab:division}所示。
+
+\begin{table}[!htbp]
+  \centering
+  \begin{tabular}{cccc}
+  \toprule
+  成员 & 学号 & 分工 & 独立撰写部分\\
+  \midrule
+  【成员A姓名】 & 【学号】 & 小题二任务一：LLVM IR 编程 & 小题一（独立完成）\\
+  【成员B姓名】 & 【学号】 & 小题二任务二：RISC-V 汇编编程 & 小题一（独立完成）\\
+  \bottomrule
+  \end{tabular}
+  \caption{小组成员及分工}
+  \label{tab:division}
+\end{table}
+
+报告整体框架由两人共同构建；摘要、引言、结论等部分共同撰写；小题一由两人
+各自独立完成实验并独立撰写；小题二按分工分别撰写各自负责的任务，实验结果
+合并展示。
+
+%==================================================================
+\section{编译系统工作流程研究（张龙飞）}
+%==================================================================
+% 本大题两人各自独立完成、独立撰写。以下骨架基于 PPT 示例的 C++ 版
+% 阶乘程序 fact.cpp，命令与数据均已实测，可直接替换为你们自己的截图与观察。
+
+本小题以 PPT 示例的 C++ 版阶乘程序 \texttt{fact.cpp} 为研究载体，利用
+编译器的命令行选项逐步获得各阶段输出（实验方案见表\ref{tab:cmd}），
+研究其与源程序的关系。
+
+\subsection{实验方案}
+
+\begin{lstlisting}[title={研究载体：阶乘程序 fact.cpp（PPT 示例）},language={C++}]
+#include <iostream>
+using namespace std;
+int main()
+{
+    int i, n, f;
+
+    cin >> n;
+    i = 2;
+    f = 1;
+    while (i <= n)
+    {
+        f = f * i;
+        i = i + 1;
+    }
+    cout << f << endl;
+}
+\end{lstlisting}
+
+\begin{table}[!htbp]
+  \centering
+  \begin{tabular}{lll}
+  \toprule
+  阶段 & 命令选项 & 产物\\
+  \midrule
+  预处理 & \texttt{clang++ -E} & \texttt{fact.i}\\
+  编译（前端） & \texttt{clang++ -emit-llvm -S} & \texttt{fact.ll}（LLVM IR）\\
+  编译（后端） & \texttt{g++ -S} / \texttt{riscv64-linux-gnu-g++ -S} & \texttt{fact.s}（汇编）\\
+  汇编 & \texttt{clang++ -c} & \texttt{fact.o}（目标文件）\\
+  链接 & \texttt{g++} / \texttt{riscv64-linux-gnu-g++ -static} & 可执行程序\\
+  运行验证 & \texttt{lli} / \texttt{qemu-riscv64} & 运行结果\\
+  \bottomrule
+  \end{tabular}
+  \caption{各编译阶段对应的命令选项与产物}
+  \label{tab:cmd}
+\end{table}
+
+\subsection{预处理器}
+% 【待补全】你们的观察与分析。要点提示：
+% 宏展开、头文件递归展开（stdio.h 注入大量声明）、注释删除、条件编译处理。
+源程序仅 17 行，经 \texttt{clang++ -E} 预处理后得到 30194 行的
+\texttt{fact.i}——C++ 标准库头文件 \texttt{<iostream>} 展开了数万行声明。
+
+\begin{figure}[H]
+    \centering
+    \fbox{\parbox[c][4cm][c]{0.85\textwidth}{\centering 【待插入截图：fact.i 与 fact.cpp 的内容对比】}}
+    \caption{预处理输出与源程序的对比}
+    \label{fig:prep}
+\end{figure}
+
+【待补全：预处理前后对比分析，例如 \texttt{\#include} 与 \texttt{\#define}
+的处理、注释的去留、可用 \texttt{-D} 选项自定义宏做进一步观察，以及
+C++ 头文件展开规模远大于 C 头文件的原因】
+
+\subsection{编译器}
+\subsubsection{编译前端：生成 LLVM IR}
+% 【待补全】要点提示：alloca/load/store 与局部变量的对应；icmp sle + br 与
+% while 循环的对应；cin/cout 变为 std::istream/ostream 的成员函数调用
+% （C++ 符号修饰，如 _ZNSirsERi）；全局量 @_ZSt3cin/@_ZSt4cout 与
+% __cxx_global_var_init 初始化函数；类型系统 i32 等。
+\texttt{clang++ -emit-llvm -S} 生成 111 行 LLVM IR（\texttt{fact.ll}），
+关键片段如下：
+
+\begin{lstlisting}[title={fact.ll 关键片段}]
+@_ZSt3cin  = external global %"class.std::basic_istream", align 8
+@_ZSt4cout = external global %"class.std::basic_ostream", align 8
+
+define dso_local noundef i32 @main() #4 {
+  %1 = alloca i32, align 4      ; return value
+  %2 = alloca i32, align 4      ; i
+  %3 = alloca i32, align 4      ; n
+  %4 = alloca i32, align 4      ; f
+  store i32 0, i32* %1, align 4
+  %5 = call ... @_ZNSirsERi(@_ZSt3cin, i32* %3)      ; cin >> n
+  store i32 2, i32* %2, align 4                      ; i = 2
+  store i32 1, i32* %4, align 4                      ; f = 1
+  br label %6
+6:                                                   ; while (i <= n)
+  %7 = load i32, i32* %2, align 4
+  %8 = load i32, i32* %3, align 4
+  %9 = icmp sle i32 %7, %8
+  br i1 %9, label %10, label %16
+10:
+  %11 = load i32, i32* %4
+  %12 = load i32, i32* %2
+  %13 = mul nsw i32 %11, %12                         ; f = f * i
+  ...
+16:
+  %17 = load i32, i32* %4, align 4
+  %18 = call ... @_ZNSolsEi(@_ZSt4cout, i32 %17)     ; cout << f
+  %19 = call ... @_ZNSolsEPFRSoS_E(%18, ... endl)    ; << endl
+  ret i32 %20
+}
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\parbox[c][4cm][c]{0.85\textwidth}{\centering 【待插入：fact.ll 控制流图（已生成：prep/stages/fact/fact\_main\_cfg.png）】}}
+    \caption{LLVM IR 与控制流结构}
+    \label{fig:ll}
+\end{figure}
+
+【待补全：IR 与源程序的对应关系分析】
+
+\subsubsection{编译后端：生成目标汇编}
+% 【待补全】要点提示：栈帧建立/销毁；参数按调用约定放入寄存器；
+% C++ 成员函数调用经链接器解析（_ZNSirsERi@plt 等）；
+% x86(CISC) 与 RISC-V(RISC) 的风格差异（如访存指令、立即数处理）。
+分别用 \texttt{g++ -S}（x86\_64，AT\&T 风格）与
+\texttt{riscv64-linux-gnu-g++ -S}（RISC-V）生成汇编，对比两者风格。
+
+\begin{figure}[H]
+    \centering
+    \fbox{\parbox[c][4cm][c]{0.85\textwidth}{\centering 【待插入截图：x86 汇编与 RISC-V 汇编对比】}}
+    \caption{同一代码在 x86 与 RISC-V 下的汇编对比}
+    \label{fig:asm}
+\end{figure}
+
+【待补全：x86 与 RISC-V 汇编的对比分析】
+
+\subsection{汇编器}
+% 【待补全】要点提示：汇编指令翻译为机器码；符号表与重定位信息
+% （objdump -r 可见 call 的目标地址尚为占位）；file 命令查看 ELF 格式。
+\texttt{clang++ -c} 将汇编翻译为目标文件 \texttt{fact.o}，可用
+\texttt{objdump -d} 反汇编查看机器码，\texttt{objdump -r} 查看重定位项。
+
+\begin{figure}[H]
+    \centering
+    \fbox{\parbox[c][3.5cm][c]{0.85\textwidth}{\centering 【待插入截图：objdump -d / objdump -r 输出】}}
+    \caption{目标文件的反汇编与重定位信息}
+    \label{fig:objdump}
+\end{figure}
+
+【待补全：汇编器功能分析】
+
+\subsection{链接器}
+% 【待补全】要点提示：std::cin/std::cout 等 C++ 符号在链接时解析到
+% libstdc++；动态链接（ldd 可见依赖）vs 静态链接（文件体积大但可独立运行，
+% 交叉编译产物用 qemu-riscv64 直接运行）。
+链接阶段将目标文件与 C++ 运行库（\texttt{std::cin}/\texttt{std::cout}
+所在的 libstdc++）组装为可执行程序。动态链接与静态链接产物对比如
+图\ref{fig:link}所示。
+
+\begin{figure}[H]
+    \centering
+    \fbox{\parbox[c][3.5cm][c]{0.85\textwidth}{\centering 【待插入截图：ldd 输出 / 动态与静态可执行文件大小对比】}}
+    \caption{动态链接与静态链接对比}
+    \label{fig:link}
+\end{figure}
+
+【待补全：链接器功能分析】
+
+\subsection{运行验证}
+四种方式运行同一程序，结果一致（输入 5，输出 120），说明各阶段产物等价：
+
+\begin{lstlisting}[title={运行验证},language=bash]
+$ echo 5 | ./fact_x86                 # x86 可执行（g++ 链接产物）
+120
+$ echo 5 | lli fact.ll                # LLVM IR 解释执行
+120
+$ echo 5 | ./fact_fromll_x86          # 由 IR 直接重编译的可执行
+120
+$ echo 5 | qemu-riscv64 ./fact_rv64   # RISC-V 可执行（QEMU 模拟）
+120
+\end{lstlisting}
+
+\subsection{进一步探索：优化选项的影响}
+% PPT 期望的加分探索。数据来自 opt_compare/SUMMARY.txt（已实测）。
+调整优化级别（\texttt{-O0/-O1/-O2/-Os}），观察 LLVM IR 与 RISC-V 汇编的
+变化，结果如表\ref{tab:opt}所示。
+
+\begin{table}[!htbp]
+  \centering
+  \begin{tabular}{lcccc}
+  \toprule
+  程序 / 产物 & -O0 & -O1 & -O2 & -Os\\
+  \midrule
+  fact：LLVM IR 行数 & 111 & 163 & 250 & 152\\
+  fact：RISC-V 汇编行数 & 156 & 97 & 146 & 89\\
+  fib：LLVM IR 行数 & 124 & 248 & 247 & 153\\
+  fib：RISC-V 汇编行数 & 177 & 156 & 231 & 118\\
+  \bottomrule
+  \end{tabular}
+  \caption{不同优化级别下 LLVM IR 与 RISC-V 汇编的规模对比}
+  \label{tab:opt}
+\end{table}
+
+% 【待补全】分析提示：fact 的 IR 在优化后行数显著增加（内联展开 C++ 库调用、
+% 循环展开、向量化等），而 RISC-V 汇编行数下降（冗余 load/store 消除、
+% mem2reg 等）；还可对比 g++ 与 clang++ 的 x86 汇编差异（133 行 vs 113 行）、
+% 加入 -g 调试选项后 objdump -S 的源码级对照、微调源程序后的输出变化等。
+【待补全：结合表\ref{tab:opt}及更多探索（如 \texttt{-g} 选项、微调源程序）
+分析优化器行为】
+
+\section{编译系统工作流程研究（袁煜杰）}
+\begin{itemize}
+\item 待补全
+\end{itemize}
+%==================================================================
+\section{LLVM IR 与汇编编程实践}
+%==================================================================
+
+\subsection{SysY 示例程序设计}
+% 【待补全】正式要求：自行设计覆盖 SysY 特性的示例程序并手写 IR/汇编。
+% 下表列出需要覆盖的特性清单，请按实际完成情况填写并扩充。
+围绕上机大作业需要支持的 SysY 特性设计示例程序，特性覆盖情况如
+表\ref{tab:feature}所示。
+
+\begin{table}[!htbp]
+  \centering
+  \begin{tabular}{lll}
+  \toprule
+  特性类别 & 覆盖点 & 示例程序\\
+  \midrule
+  数值运算 & +、-、*、/、\%，单目 +/-，关系与逻辑运算 & 【如 calc.sy】\\
+  语句 & 赋值、语句块、if/else、while、break/continue、return & 【如 branch\_loop.sy】\\
+  函数 & 声明、调用、参数传递、递归 & 【fact 递归版等】\\
+  常量与变量 & const、初始化、嵌套作用域 & 【如 scope.sy】\\
+  运行时库 & getint/putint/putch/getch 交互 & 【各示例均使用】\\
+  进阶（选做） & 数组、浮点数 & 【如 array.sy】\\
+  \bottomrule
+  \end{tabular}
+  \caption{SysY 特性覆盖设计}
+  \label{tab:feature}
+\end{table}
+
+本报告以循环版阶乘程序（SysY 风格，通过 getint/putint 与运行时库交互）
+作为入门示例，完整覆盖各特性的示例程序见附件。
+
+\subsection{手写 LLVM IR 程序及验证}
+% 【小题二任务一负责人撰写】
+手写 LLVM IR 采用含 $\phi$ 节点的标准 SSA 形式，与 SysY 源程序语义等价：
+
+\begin{lstlisting}[title={手写 LLVM IR：fact\_manual.ll}]
+declare i32 @getint()
+declare void @putint(i32)
+declare void @putch(i32)
+
+define i32 @main() {
+entry:
+  %n = call i32 @getint()
+  br label %loop
+loop:
+  %i = phi i32 [ 2, %entry ], [ %i_next, %body ]
+  %f = phi i32 [ 1, %entry ], [ %f_next, %body ]
+  %cond = icmp sle i32 %i, %n
+  br i1 %cond, label %body, label %done
+body:
+  %f_next = mul nsw i32 %f, %i
+  %i_next = add nsw i32 %i, 1
+  br label %loop
+done:
+  call void @putint(i32 %f)
+  call void @putch(i32 10)
+  ret i32 0
+}
+\end{lstlisting}
+
+链接 SysY 运行时库（\texttt{sylib.c}）编译并运行，输入 7 输出 5040，
+结果正确：
+
+\begin{lstlisting}[language=bash]
+$ clang fact_manual.ll sylib.c -o fact_manual_ll
+$ echo 7 | ./fact_manual_ll
+5040
+\end{lstlisting}
+
+进一步地，手写 IR 可经 \texttt{llc} 自动下降到 RISC-V 汇编并运行，
+体现 LLVM IR 作为跨平台中间层的作用：
+
+\begin{lstlisting}[language=bash]
+$ llc -march=riscv64 -mattr=+m,+a,+f,+d,+c fact_manual.ll -o fact_rv.s
+$ riscv64-linux-gnu-gcc -static fact_rv.s sylib.c -o fact_fromll_rv
+$ echo 7 | qemu-riscv64 ./fact_fromll_rv
+5040
+\end{lstlisting}
+
+【待补全：更多示例程序的手写 IR 与验证过程】
+
+\subsection{手写 RISC-V 汇编程序及验证}
+% 【小题二任务二负责人撰写】
+手写 RISC-V（RV64）汇编遵循标准调用约定（a0--a7 传参、ra 保存返回地址、
+s0--s11 为被调者保存寄存器）：
+
+\begin{lstlisting}[title={手写 RISC-V 汇编：fact\_manual\_rv.s（关键片段）}]
+main:
+    addi  sp, sp, -32
+    sd    ra, 24(sp)
+    sd    s0, 16(sp)
+    sd    s1, 8(sp)
+    sd    s2, 0(sp)
+    call  getint          # a0 = n
+    mv    s0, a0
+    li    s1, 2           # i = 2
+    li    s2, 1           # f = 1
+.Lloop:
+    bgt   s1, s0, .Ldone  # while (i <= n)
+    mul   s2, s2, s1      # f = f * i
+    addi  s1, s1, 1       # i = i + 1
+    j     .Lloop
+.Ldone:
+    mv    a0, s2
+    call  putint
+    li    a0, 10
+    call  putch
+    li    a0, 0
+    ld    ra, 24(sp)
+    ld    s0, 16(sp)
+    ld    s1, 8(sp)
+    ld    s2, 0(sp)
+    addi  sp, sp, 32
+    ret
+\end{lstlisting}
+
+交叉编译并通过 QEMU 运行，输入 7 输出 5040，结果正确：
+
+\begin{lstlisting}[language=bash]
+$ riscv64-linux-gnu-gcc -static fact_manual_rv.s sylib.c -o fact_manual_rv
+$ echo 7 | qemu-riscv64 ./fact_manual_rv
+5040
+\end{lstlisting}
+
+【待补全：更多示例程序的手写汇编与验证过程，可对比手写汇编与
+\texttt{riscv64-linux-gnu-gcc -S} 自动生成汇编的差异】
+
+\subsection{等价性验证与结果分析}
+所有产物对同一输入的运行结果一致，验证了手写 IR / 手写汇编与源程序的
+等价性，汇总如表\ref{tab:equiv}所示。
+
+\begin{table}[!htbp]
+  \centering
+  \begin{tabular}{lcccc}
+  \toprule
+  示例程序 & 特性 & 手写 IR 运行 & 手写汇编运行 & 预期结果\\
+  \midrule
+  fact（$n=7$） & 循环/运算/库调用 & 5040 \cmark & 5040 \cmark & 5040\\
+  【待补充】 & & & & \\
+  【待补充】 & & & & \\
+  \bottomrule
+  \end{tabular}
+  \caption{示例程序的等价性验证结果}
+  \label{tab:equiv}
+\end{table}
+
+【待补全：结果分析与体会】
+
+%==================================================================
+\section{总结与体会}
+%==================================================================
+% 【待补全】要点提示：
+% 1) 对语言处理系统各阶段（预处理/编译/汇编/链接）的直观认识；
+% 2) 对 LLVM IR（SSA、phi 节点）与 RISC-V 汇编（调用约定、栈帧）的理解；
+% 3) 本次预备工作对后续模块（词法/语法分析器、中间代码生成、目标代码生成）
+%    的铺垫作用：词法用 flex、语法用 bison、IR 生成对标 clang++ -emit-llvm、
+%    目标代码生成对标 riscv64-linux-gnu-gcc -S；
+% 4) 遇到的问题与解决方法。
+【待补全：总结与体会】
+
+%----------------------------------------------------------------
+\newpage
+
+\end{document}
