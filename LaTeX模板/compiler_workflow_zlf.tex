@@ -25,8 +25,10 @@
 \end{tikzpicture}
 \caption{从源程序到可执行文件的主要阶段}
 \end{figure}
+
 \begin{table}[htbp]
 \centering\small
+\caption{阶段观察方法}\label{tab:zlf-cmd}
 \begin{tabularx}{\textwidth}{lYl}
 \toprule 阶段 & 实验命令选项 & 主要产物\\\midrule
 预处理 & \texttt{clang++ -E} & .i\\
@@ -41,7 +43,6 @@
 观察工具 & \texttt{objdump -d/-r/-S}、\texttt{nm}、\texttt{readelf}、\texttt{ldd} & 符号、重定位等\\
 \bottomrule
 \end{tabularx}
-\caption{阶段观察方法}\label{tab:zlf-cmd}
 \end{table}
 
 \subsubsection{预处理：头文件、宏与条件编译}
@@ -49,7 +50,8 @@
 新增内容主要来自 \texttt{iostream} 及其递归包含的类型、函数和模板声明；
 文件开头的行标记用于关联展开内容的原始文件位置。预处理不计算阶乘，
 而是在词法及语法处理前展开包含文件、宏和条件编译分支。
-独立宏实验将 STEP(x) 定义为 ((x)+1)，由 MODE 决定保留 STEP(1) 或 STEP(4)。
+为单独观察宏与条件编译，另写一个不含头文件的宏实验：将 STEP(x) 定义为 ((x)+1)，
+由 MODE 决定保留 STEP(1) 还是 STEP(4)。
 
 \experimentshot{02-preprocessing}{预处理与条件编译结果}
 
@@ -79,8 +81,10 @@ token 转储共 126745 行，包含头文件 token 和 EOF。每行记录类别�
 \paragraph{语义检查与语法错误的区别}
 编写四个独立小程序，使用 \texttt{-fsyntax-only} 运行前端检查。
 该参数包含语法与语义检查，不能将全部诊断都归为语法错误。
+
 \begin{table}[htbp]
 \centering\small
+\caption{前端错误分类实验}
 \begin{tabularx}{\textwidth}{lYc}
 \toprule 用例 & 实测诊断或行为 & 退出状态\\\midrule
 合法调用 & \texttt{square(3)}，无诊断 & 0\\
@@ -89,7 +93,6 @@ token 转储共 126745 行，包含头文件 token 和 EOF。每行记录类别�
 缺少表达式 & \texttt{int x = ;}，\texttt{expected expression} & 1\\
 \bottomrule
 \end{tabularx}
-\caption{前端错误分类实验}
 \end{table}
 
 参数类型错误用例 \texttt{square("abc")} 具有合法的函数调用结构，但字符串不能转换为形参要求的 int。
@@ -131,6 +134,7 @@ Clang 自动生成的阶乘 LLVM IR 共 111 行。未优化的局部变量对应
 
 \begin{table}[htbp]
 \centering
+\caption{受控函数的实际指令数量变化}
 \begin{tabular}{lrrrrr}
 \toprule 产物 & alloca & load & store & add & mul\\\midrule
 原始 IR & 3 & 3 & 3 & 2 & 1\\
@@ -138,7 +142,6 @@ mem2reg 后 & 0 & 0 & 0 & 2 & 1\\
 再经 instcombine & 0 & 0 & 0 & 1 & 0\\
 \bottomrule
 \end{tabular}
-\caption{受控函数的实际指令数量变化}
 \end{table}
 
 mem2reg 将可提升的栈变量改为 SSA 值，消除了本例的内存访问；
@@ -146,10 +149,10 @@ instcombine 消除加零与乘一，将函数简化为 $x+3$。对照函数体�
 
 \subsubsection{代码生成：x86 与 RISC-V 的对应关系}
 
-分别使用原生 G++ 和课程交叉工具链的 \texttt{-S} 获得目标汇编。
-观察阶乘循环中的乘法和加一操作。
+分别使用原生 G++ 和课程交叉工具链的 \texttt{-S} 获得目标汇编，
+再对照同一段阶乘循环中的乘法和加一操作。
 
-两段完成相同的变量更新。x86 的 \texttt{imull} 可以带内存源操作数；
+两段汇编完成相同的变量更新，但操作数的组织方式不同。x86 的 \texttt{imull} 可以带内存源操作数；
 RISC-V 的计算采用寄存器操作数，\texttt{lw/sw} 负责访存。
 RV64 的 \texttt{mulw/addiw} 保留 int 的 32 位运算宽度，再符号扩展到 64 位。
 生成代码还包含栈帧、寄存器保存和 C++ 库函数调用。指令数量不同不能单独推出性能优劣，
@@ -175,6 +178,7 @@ RV64 的 \texttt{mulw/addiw} 保留 int 的 32 位运算宽度，再符号扩展
 
 \begin{table}[htbp]
 \centering
+\caption{同平台构建的实测文件大小}
 \begin{tabular}{lrl}
 \toprule 产物 & 文件字节数 & 输入 5 的输出\\\midrule
 动态链接 & 16624 & 120\\
@@ -182,8 +186,8 @@ RV64 的 \texttt{mulw/addiw} 保留 int 的 32 位运算宽度，再符号扩展
 带调试信息 & 33504 & 120\\
 \bottomrule
 \end{tabular}
-\caption{同平台构建的实测文件大小}
 \end{table}
+
 动态版的 ldd 显示 libstdc++、libc、libm 和 libgcc\_s 等依赖，静态版提示
 ``not a dynamic executable''。链接器安排输入节的布局、处理重定位并解析符号；
 静态链接会从归档库提取需要的目标成员，动态链接通常保留 PLT／GOT 和动态符号信息，
@@ -195,16 +199,19 @@ RV64 的 \texttt{mulw/addiw} 保留 int 的 32 位运算宽度，再符号扩展
 带调试信息的文件变大，但该变化主要来自调试元数据，不代表执行指令同比增多。
 
 分别使用 O0、O1、O2 和 Os 编译，统计文本行数，结果如下：
+
 \begin{table}[htbp]
 \centering
+\caption{阶乘程序不同优化级别的文本规模}
 \begin{tabular}{lrrrr}
 \toprule fact 产物 & O0 & O1 & O2 & Os\\\midrule
 LLVM IR 行数 & 111 & 163 & 250 & 152\\
 RISC-V 汇编行数 & 66 & 49 & 88 & 45\\
 \bottomrule
 \end{tabular}
-\caption{阶乘程序不同优化级别的文本规模}
+
 \end{table}
+
 文本规模同时受到注释、属性和代码变换影响，因此结合具体指令变化分析优化行为。
 
 \subsubsection{自动并行化与运行验证}

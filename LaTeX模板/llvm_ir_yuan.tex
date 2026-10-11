@@ -7,8 +7,10 @@
 手写 IR 将源语言中的变量、条件和地址分别表示为有类型的值。
 比较指令产生 i1，而输出函数接收 i32，因此布尔结果在输出或参与整数运算前使用 zext。
 块作用域中的同名变量分配不同的值或存储位置，离开内层块后继续引用外层变量。
+
 \begin{table}[htbp]
 \centering\small
+\caption{六组示例中的类型与操作映射}
 \begin{tabular}{p{0.24\linewidth}p{0.27\linewidth}p{0.35\linewidth}}
 \toprule
 源语言对象 & 本实验的 IR 表示 & 对应操作\\
@@ -20,8 +22,8 @@ float 及浮点参数 & float & fadd、fmul、sitofp、fptosi\\
 可变全局 hits & 全局 i32 存储 & load / store 保留调用副作用\\
 \bottomrule
 \end{tabular}
-\caption{六组示例中的类型与操作映射}
 \end{table}
+
 例如输入 $n=-7$，sdiv 的 $n/2$ 为 $-3$，srem 的 $n\%3$ 为 $-1$，
 算术式输出 1；随后输出 7、$-7$、$-7$，检查单目运算与外层变量值。
 算术与地址操作分别使用适当的位宽，使变量计算和数组寻址具有明确类型。
@@ -41,8 +43,10 @@ llc -mtriple=riscv64-linux-gnu -mattr=+m,+a,+f,+d,+c \
 \end{minipage}\par\vspace{0.5\baselineskip}
 
 \subsection{示例设计与特性覆盖}
+
 \begin{table}[htbp]
 \centering\small
+\caption{本次手写 LLVM IR 的实验设计}
 \begin{tabular}{p{0.23\linewidth}p{0.54\linewidth}r}
 \toprule
 示例 & 主要覆盖 & 输入数\\
@@ -55,7 +59,6 @@ array\_float & 二维数组、部分初始化、数组形参、浮点运算与�
 promote\_demo & 内存形式循环及 mem2reg 对照 & 5\\
 \bottomrule
 \end{tabular}
-\caption{本次手写 LLVM IR 的实验设计}
 \end{table}
 
 算术例子输入 $n$，计算 $(n+3)\times2-n/2+n\%3+7$，并分别输出
@@ -105,8 +108,10 @@ LLVM verifier 检查类型、前驱和支配关系，运行测试检查输出。
 phi 的每个输入由“值、前驱块”配对，进入当前块时按实际前驱选择。
 循环首次进入时，i 和 sum 都来自 entry；跳过 2 时，回边更新 i 并保留原 sum；
 执行累加时，两者分别取 next 和 added。
+
 \begin{table}[htbp]
 \centering\small
+\caption{循环头 phi 与控制流边的对应关系}
 \begin{tabular}{lll}
 \toprule
 进入 header 的前驱 & i 的输入 & sum 的输入\\
@@ -116,8 +121,8 @@ skip（continue） & next & 原 sum\\
 accumulate（普通回边） & next & added\\
 \bottomrule
 \end{tabular}
-\caption{循环头 phi 与控制流边的对应关系}
 \end{table}
+
 输入 8 时，在处理数值 6 的 break 路径离开循环，出口选择当前 sum=13，
 不会执行对 6 的累加。这里同时区分了循环条件退出与循环体内的提前退出。
 

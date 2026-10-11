@@ -7,6 +7,7 @@
 
 \begin{table}[htbp]
 \centering\small
+\caption{手写汇编与同名 SysY、LLVM IR 示例的对应关系}
 \begin{tabular}{p{0.25\linewidth}p{0.62\linewidth}}
 \toprule
 文件 & 实现重点\\
@@ -19,7 +20,6 @@ array\_float\_rv.s & 二维数组行步长、补零、float ABI、显式截断�
 promote\_demo\_rv.s & 寄存器求和循环，与内存形式 LLVM IR 对照\\
 \bottomrule
 \end{tabular}
-\caption{手写汇编与同名 SysY、LLVM IR 示例的对应关系}
 \end{table}
 
 SysY 的 int 是 32 位，而 RV64 的整数寄存器是 64 位。
@@ -52,8 +52,10 @@ LLVM IR 中的 phi 对应不同路径对状态寄存器的更新。
 循环内不调用其他函数，因此这些寄存器在整个迭代过程中保持可用。
 遇到 2 时直接回到条件检查，t1 不变；遇到大于 5 的值时跳到出口，
 只在普通路径执行 addw。这与 IR 中 skip、break.test、accumulate 三条路径一一对应。
+
 \begin{table}[htbp]
 \centering\small
+\caption{同一寄存器循环中的条件退出、continue 与 break}
 \begin{tabular}{llll}
 \toprule
 输入上限 & 实际累加项 & 输出 & 控制路径\\
@@ -64,7 +66,6 @@ LLVM IR 中的 phi 对应不同路径对状态寄存器的更新。
 8 & 1、3、4、5 & 13 & 处理 6 时 break\\
 \bottomrule
 \end{tabular}
-\caption{同一寄存器循环中的条件退出、continue 与 break}
 \end{table}
 
 递归 factorial 的非基本情形保存原参数和 ra，再调用自身，汇编与对应运行记录见图\ref{fig:recursive-rv}：
@@ -90,8 +91,10 @@ factorial 的非基例在 16 字节栈帧中保存 ra 和 s0，s0 持有当前�
 
 数组示例还需要在多次函数调用之间保存数组、浮点结果和中间整数。
 其 main 实际使用如下 64 字节栈帧：
+
 \begin{table}[htbp]
 \centering\small
+\caption{array\_float 的 main 栈帧布局}
 \begin{tabular}{lll}
 \toprule
 相对 sp 的偏移 & 宽度 & 用途\\
@@ -103,8 +106,8 @@ factorial 的非基例在 16 字节栈帧中保存 ra 和 s0，s0 持有当前�
 56 & 8 字节 & 保存 ra\\
 \bottomrule
 \end{tabular}
-\caption{array\_float 的 main 栈帧布局}
 \end{table}
+
 调用 row\_sum 后，第一行结果转存 s0，随后第二次调用产生的 a0 与 s0 相加。
 浮点结果提前用 fsw 保存到偏移 24，整数截断值放入 s1；
 输出数组和整数后，再通过 flw 恢复浮点值完成正值判断。
@@ -152,6 +155,7 @@ printf '7\n' | qemu-riscv64 build/prep-llvm-ir/functions_handwritten_rv
 
 \begin{table}[htbp]
 \centering\small
+\caption{实际执行的代表结果，逗号表示换行分隔的输出}
 \begin{tabular}{llll}
 \toprule
 示例 & 代表输入 & 源程序/IR/手写汇编 stdout & 验证重点\\
@@ -164,7 +168,6 @@ array\_float & -3 / 2 & 10, -8, 0 / 10, 7, 1 & 数组、浮点与转换\\
 promote\_demo & 5 & 10 & 循环累加\\
 \bottomrule
 \end{tabular}
-\caption{实际执行的代表结果，逗号表示换行分隔的输出}
 \end{table}
 
 每个输入比较八条路径：C 参考程序本机/RV64、手写 IR 本机/RV64

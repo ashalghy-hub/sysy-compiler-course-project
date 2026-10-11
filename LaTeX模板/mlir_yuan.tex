@@ -15,6 +15,7 @@ HACC 属性表达。编译后还需要 CANN runtime 注册和启动设备程序�
 
 \begin{table}[htbp]
 \centering\small
+\caption{两种路线的职责与证据差异}
 \begin{tabular}{p{0.22\linewidth}p{0.31\linewidth}p{0.36\linewidth}}
 \toprule
 比较点 & 上游 CPU 实验 & Ascend 官方文档路线\\
@@ -26,7 +27,6 @@ HACC 属性表达。编译后还需要 CANN runtime 注册和启动设备程序�
 证据 & 本机各层输出与运行检查 & 官方示例和架构文档分析\\
 \bottomrule
 \end{tabular}
-\caption{两种路线的职责与证据差异}
 \end{table}
 
 \subsection{可执行的上游 VecAdd 设计}
@@ -63,10 +63,12 @@ mlir-opt 02_cf.mlir --convert-to-llvm \
 mlir-translate --mlir-to-llvmir 03_llvm.mlir -o 04_llvm.ll
 \end{lstlisting}
 \end{minipage}\par\vspace{0.5\baselineskip}
-各阶段输出由验证脚本保存。
+
+上述每一步的输出都由验证脚本保存为独立文件，供后续逐层对照。
 
 \begin{table}[htbp]
 \centering\small
+\caption{MLIR 降低阶段与操作方言}
 \begin{tabular}{lrl}
 \toprule
 检查点 & 行数 & 实际观察到的操作方言\\
@@ -77,7 +79,6 @@ mlir-translate --mlir-to-llvmir 03_llvm.mlir -o 04_llvm.ll
 03\_llvm & 67 & LLVM\\
 \bottomrule
 \end{tabular}
-\caption{MLIR 降低阶段与操作方言}
 \end{table}
 
 首先 generic 被展开为 \texttt{scf.for}，循环体出现两个 memref.load、一次
@@ -102,8 +103,10 @@ arith.addi 和一次 memref.store。接着循环被拆成比较、条件分支�
 降低为 SCF 后，循环范围为 $[0,16)$、步长为 1；转为 CF 后，循环头的块参数承接初值 0
 和回边上的 $i+1$，比较结果决定进入计算块或返回块。
 最终 LLVM IR 的循环头使用 phi i64 表达这一合流，而加法数据仍为 i16。
+
 \begin{table}[htbp]
 \centering\small
+\caption{本次 VecAdd 各层的操作对应关系}
 \begin{tabular}{p{0.21\linewidth}p{0.28\linewidth}p{0.37\linewidth}}
 \toprule
 计算要素 & 中间层表示 & LLVM 层表示\\
@@ -115,8 +118,8 @@ arith.addi 和一次 memref.store。接着循环被拆成比较、条件分支�
 函数出口 & func.return & ret void\\
 \bottomrule
 \end{tabular}
-\caption{本次 VecAdd 各层的操作对应关系}
 \end{table}
+
 循环边界、迭代步长和元素运算在各层保持一致；变化主要在于控制流与地址的表达方式。
 最终文件中三个 getelementptr 的元素类型均为 i16，连续索引相差 2 字节。
 每次迭代读取两个输入、相加并写入一个输出位置，对应原始 generic 的一个迭代实例。
@@ -128,8 +131,10 @@ C 驱动使用与实际生成接口匹配的结构：
 \par\vspace{0.7\baselineskip}\noindent\begin{minipage}[t]{\linewidth}
 \lstinputlisting[language=C,firstline=5,lastline=9]{../prep/mlir/driver.c}
 \end{minipage}\par\vspace{0.5\baselineskip}
+
 \begin{table}[htbp]
 \centering\small
+\caption{CPU VecAdd 的一维 MemRef 描述符}
 \begin{tabular}{lll}
 \toprule
 描述符字段 & 本实验设置 & 含义\\
@@ -140,8 +145,8 @@ sizes[0] & 16 & 一维数组长度\\
 strides[0] & 1 & 相邻逻辑元素的元素步长\\
 \bottomrule
 \end{tabular}
-\caption{CPU VecAdd 的一维 MemRef 描述符}
 \end{table}
+
 生成的 \texttt{\_mlir\_ciface\_vecadd} 接收三个描述符地址，
 读取各字段后调用内部 vecadd。内部函数将每个描述符展开为五个参数，共 15 个参数。
 本例为静态长度、零偏移、单位步长，降低后的实际循环直接从 aligned 地址按 i16 元素索引访存。

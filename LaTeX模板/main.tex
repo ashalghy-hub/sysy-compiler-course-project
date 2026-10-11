@@ -2,13 +2,14 @@
 \usepackage[left=3.17cm,right=3.17cm,top=2.74cm,bottom=2.74cm]{geometry}
 \usepackage{amsmath,array,graphicx,float,booktabs,xcolor,listings}
 \usepackage{tabularx,tikz}
+\usepackage[labelsep=quad]{caption}
 \usepackage[colorlinks,linkcolor=black,urlcolor=blue,citecolor=black]{hyperref}
 \usepackage{fancyhdr}
 \setlength{\headheight}{15pt}
 \pagestyle{fancy}\lhead{\kaishu\leftmark}\rhead{\kaishu 编译原理实验报告}\cfoot{\thepage}
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 \newcommand{\sihao}{\fontsize{14pt}{21pt}\selectfont}
-\ctexset{section={name={,、},number=\chinese{section}},subsection={name={（,）},number=\chinese{subsection}}}
+\ctexset{section={name={,、},number=\chinese{section}},subsection={name={（,）},number=\chinese{subsection}},subsubsection={name={,.},number=\arabic{subsubsection}}}
 \lstset{basicstyle=\small\ttfamily,breaklines=true,frame=single,columns=fullflexible,keepspaces=true}
 \setcounter{tocdepth}{2}
 \setlength{\emergencystretch}{2em}
@@ -66,12 +67,34 @@ SysY 编译器（词法分析、语法分析、类型检查与中间代码生成
         建立直观认识与技术储备。
 \end{enumerate}
 
+\subsection{小组分工}
+本实验由两人合作完成，成员与分工如表\ref{tab:division}所示。
+基本要求一（编译系统工作流程研究）与进阶要求（MLIR 多级中间表示探索）由两人共同完成；
+基本要求二按分工分别编写 LLVM IR 与 RISC-V 汇编，实验结果合并展示。
+报告的框架、摘要、引言与结论由两人共同撰写。
+
+\begin{table}[!htbp]
+  \centering
+  \caption{小组成员与分工}
+  \label{tab:division}
+  \begin{tabular}{lll}
+  \toprule
+  成员 & 学号 & 承担工作\\
+  \midrule
+  张龙飞 & 2413625 & 基本要求一（共同完成）；基本要求二：RISC-V 汇编编程\\
+  袁煜杰 & 2412303 & 基本要求一（共同完成）；基本要求二：LLVM IR 编程\\
+  \bottomrule
+  \end{tabular}
+\end{table}
+
 \subsection{工作流程实验环境}
 本实验在 WSL2（Windows Subsystem for Linux）中进行，使用 QEMU 用户态模拟器
 运行 RISC-V 目标程序。主要工具及版本如表\ref{tab:env}所示。
 
 \begin{table}[!htbp]
   \centering
+  \caption{实验环境与工具版本}
+  \label{tab:env}
   \begin{tabular}{ll}
   \toprule
   项目 & 版本 / 说明\\
@@ -84,8 +107,6 @@ SysY 编译器（词法分析、语法分析、类型检查与中间代码生成
   模拟器 & QEMU 7.0.0（qemu-riscv64 用户态模式，/opt/qemu 源码编译）\\
   \bottomrule
   \end{tabular}
-  \caption{实验环境与工具版本}
-  \label{tab:env}
 \end{table}
 \subsection{IR 与 MLIR 实验环境}
 实际运行环境为 WSL Ubuntu 26.04.1 LTS（x86\_64），Clang/LLVM 21.1.8，
@@ -123,6 +144,19 @@ RISC-V GCC 15.2.0，QEMU 10.2.1。MLIR 21.1.8 工具从 Ubuntu 官方源下载�
 六组程序在八条执行路径上输出一致，连同 mem2reg 对照，269 项检查全部通过。
 MLIR VecAdd 实验展示了从高层计算结构到循环、分支和指针操作的逐层降低，
 16 个输出元素全部正确。实验将语言语义、中间表示与目标执行结果建立了对应关系。
+
+动手之后最直接的体会是，容易写错的往往不是算法，而是读代码时会跳过的约定：
+int 是 32 位而 RV64 的寄存器是 64 位，sp 要保持 16 字节对齐，非叶函数要保存 ra。
+这类差错通常不会让程序立刻失败，而是给出一个看似合理的结果，
+所以验证不能只看返回值——短路例子以 touch 的调用次数和全局 hits 计数作为判据。
+工具也会掩盖问题：O0 生成的函数带 optnone 属性，直接运行 opt 不报错，只是什么都不做，
+pass 的输出只有与预期的具体变换逐条对照才能确认。
+MLIR 的逐层降低则表明，高层保留的索引映射与并行语义，
+在低层被展开成指针、循环和调用接口，丢掉的信息正是上一层优化所需的，
+这也解释了为什么要比较 llc 输出与手写汇编。
+此外，两部分分别在 Ubuntu 22.04（LLVM 14、QEMU 7.0.0）与
+Ubuntu 26.04（LLVM 21、QEMU 10.2.1）上完成，工具链版本并不一致，
+同一份手写 IR 在两端并不通用，后续实验宜先固定版本再动手。
 
 \clearpage
 \begin{thebibliography}{9}
