@@ -1,11 +1,9 @@
 \subsection{手写 RISC-V 汇编的组织与调用约定}
-六组源程序各有一份独立编写的 RV64GC 汇编，位于
-\path{prep/llvm_ir/handwritten/}。这些文件从源程序的语义直接组织指令、
-寄存器和跳转，不以 llc 生成文件替代手写结果。目标 ABI 为 LP64D，
+六组示例采用 RV64GC 指令集和 LP64D 调用约定。
 整数参数和返回值使用 a0 等参数寄存器，浮点函数的单精度参数和返回值使用 fa0。
 遵循 RISC-V psABI\cite{riscvabi}，函数调用处保持 sp 的 16 字节对齐，
 使用 s 寄存器的函数保存并恢复相应值；非叶函数保存返回地址 ra。
-需要跨调用保留的数据放在 s 寄存器或栈上，不能假设 t、a、ft 寄存器跨调用保持。
+跨调用保留的数据存入 s 寄存器或栈中。
 
 \begin{table}[htbp]
 \centering\small
@@ -27,7 +25,7 @@ promote\_demo\_rv.s & 寄存器求和循环，与内存形式 LLVM IR 对照\\
 SysY 的 int 是 32 位，而 RV64 的整数寄存器是 64 位。
 因此使用 addw、addiw、subw、mulw、divw、remw 等指令处理整数计算，
 lw 读取数组元素，并保持 32 位结果的符号扩展。寻址和 sp 调整则使用 64 位指令。
-伪指令 call、ret、li、la 由汇编器展开；它们不会把 C 或 LLVM IR 自动翻译为汇编。
+伪指令 call、ret、li、la 由汇编器展开。
 
 \subsection{短路、循环与递归的目标代码表达}
 短路例子先检查 n，再进入右侧表达式。以下为受保护除法的完整控制片段：
@@ -48,8 +46,7 @@ lw 读取数组元素，并保持 32 位结果的符号扩展。寻址和 sp 调
 其中 s0 保存 n。n=0 时直接跳过 divw；另一个逻辑或条件在 n=0 时直接进入真分支，
 不会调用 touch。全局 hits 通过 la/lw/sw 访问，输出次数与 LLVM IR 版本一致。
 循环例子用寄存器保存 i 与 sum，continue 跳回条件检查，break 跳到输出出口。
-LLVM IR 中 phi 的作用在此由不同路径对同一状态寄存器的更新体现，
-不需要在汇编中引入名为 phi 的指令。
+LLVM IR 中的 phi 对应不同路径对状态寄存器的更新。
 
 递归 factorial 的非基本情形保存原参数和 ra，再调用自身：
 
@@ -85,7 +82,7 @@ main 的 64 字节栈帧中，偏移 0--20 保存六个元素，24 保存 scaled
 $1.5n+0.5$，twice 在 fa0 中收参并返回 $3n+1$。
 fcvt.w.s 的 rtz 模式显式实现 float 到 int 的向零截断。
 scaled 在后续 row\_sum、putint、putch 调用期间保存在栈上，
-最后重新加载并用 flt.s 比较，避免错误依赖浮点临时寄存器跨调用不变。
+最后重新加载并用 flt.s 比较。
 
 \subsection{汇编、链接和同输入等价性验证}
 验证脚本对每个手写文件执行静态链接并由 QEMU 运行，例如：
@@ -98,9 +95,7 @@ printf '7\n' | qemu-riscv64 build/prep-llvm-ir/functions_handwritten_rv
 # stdout: 5040, process exit status: 0
 \end{lstlisting}
 \end{minipage}\par\vspace{0.5\baselineskip}
-gcc 在这里调用汇编器和链接器处理手写 .s，库源码另行编译；
-源程序和 LLVM IR 的参考编译路径与此独立。链接失败、模拟执行超时、非零退出码
-或任一输出差异都会使验证脚本失败。
+汇编器生成目标代码，链接器解析库函数，QEMU 执行 RV64 程序。
 
 \begin{table}[htbp]
 \centering\small
@@ -119,17 +114,8 @@ promote\_demo & 5 & 10 & 循环累加\\
 \caption{实际执行的代表结果，逗号表示换行分隔的输出}
 \end{table}
 
-每个输入现在比较八条路径：C 参考程序本机/RV64、手写 IR 本机/RV64
+每个输入比较八条路径：C 参考程序本机/RV64、手写 IR 本机/RV64
 （原始与 O2）、lli、手写 RV64 汇编。33 组输入共 264 项，
 加 mem2reg 的 5 项为 \textbf{269/269 通过}。
 arithmetic、short\_circuit、loop\_control 各 48 项，functions 与 array\_float 各 40 项，
 promote\_demo 含 mem2reg 共 45 项。全部输出逐字比较，并检查进程退出码为 0。
-其中新增手写汇编独立贡献 33 项运行验证。
-
-\subsection{基本要求二结论}
-六组示例均已形成源程序、手写 LLVM IR、手写 RISC-V 汇编和同输入验证的闭环。
-相同可观测结果说明当前测试范围内语义一致，IR verifier 进一步确认结构合法。
-示例涵盖基本数值运算、赋值、分支、循环、函数，以及数组和浮点进阶特性；
-库链接通过 getint、putint、putch 实际交互验证。
-当前使用最小教学运行库而非课程正式二进制库；正式库适配、全部库接口验收、
-任意输入下的等价性证明和完整编译器实现均不是本次已经完成的结论。

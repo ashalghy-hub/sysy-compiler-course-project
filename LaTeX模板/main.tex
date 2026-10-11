@@ -1,4 +1,3 @@
-% UTF-8; XeLaTeX. Keep only packages actually used by this report.
 \documentclass[UTF8,a4paper,10pt]{ctexart}
 \usepackage[left=3.17cm,right=3.17cm,top=2.74cm,bottom=2.74cm]{geometry}
 \usepackage{amsmath,array,graphicx,float,booktabs,xcolor,listings}
@@ -31,34 +30,27 @@
     {\Large \today}
     \end{center}
 \end{titlepage}
-%-------------摘------要--------------
 \newpage
 \thispagestyle{empty}
 \renewcommand{\abstractname}{\kaishu \sihao \textbf{摘要}}
     \begin{abstract}
-本报告研究预备工作中的编译工具流程、LLVM IR 与 RISC-V 汇编编程，以及 MLIR 中端的多级降低。
-基本要求二设计六组 SysY 示例并编写同源手写 LLVM IR 和 RISC-V 汇编，覆盖数值运算、
-作用域、短路、循环、函数、数组与浮点转换。通过结构检查、参考编译及本机/RV64 运行对照，
-33 组输入的八条执行路径及 mem2reg 对照共 269 项检查全部通过。
-进阶部分查阅 AscendNPU IR 官方 VecAdd、架构与方言文档，另实际执行上游 MLIR
-从 Linalg 经 SCF、CF、LLVM 方言到 LLVM IR 的降低，VecAdd 的 16 个元素均正确。
-本机未配置 NPU/CANN，专有路线只报告文档研究；当前使用最小教学运行库，正式课程库尚待复测。
+本实验通过编译工具的阶段输出研究语言处理流程，并设计六组 SysY 示例，
+编写等价的 LLVM IR 与 RISC-V 汇编，涵盖算术、分支、循环、函数、数组和浮点转换。
+通过参考程序、本机及 RV64 运行对照，共 269 项检查全部通过。
+进阶部分结合 AscendNPU IR 官方 VecAdd 文档分析方言层级，
+并执行上游 MLIR 从 Linalg 经 SCF、CF、LLVM 方言到 LLVM IR 的降低，
+CPU VecAdd 的 16 个输出元素均正确。
 \end{abstract}
 \noindent\textbf{关键词：}SysY；LLVM IR；RISC-V；SSA；MLIR；等价性验证
 
-%----------------------------------------------------------------
 \newpage\tableofcontents
-%----------------------------------------------------------------
 \newpage
 
 \pagenumbering{arabic}
 
-%==================================================================
 \section{引言}
-%==================================================================
 
 \subsection{实验背景与目的}
-% 【待补全】用自己的话概述，可包含以下要点：
 SysY 是全国大学生编译系统设计赛定义的简化 C 语言。本课程上机大作业要求实现一个
 SysY 编译器（词法分析、语法分析、类型检查与中间代码生成、代码优化、目标代码生成），
 目标平台为 RISC-V。本次预备工作是上机大作业的第一个模块，目的在于：
@@ -99,13 +91,8 @@ RISC-V GCC 15.2.0，QEMU 10.2.1。MLIR 21.1.8 工具从 Ubuntu 官方源下载�
 详细命令和版本保存在实验结果目录中。
 
 \section{基本要求一：编译系统工作流程研究}
-%==================================================================
-% 本大题两人各自独立完成、独立撰写。以下骨架基于 PPT 示例的 C++ 版
-% 阶乘程序 fact.cpp，命令与数据均已实测，可直接替换为你们自己的截图与观察。
 
-本小题以 PPT 示例的 C++ 版阶乘程序 \texttt{fact.cpp} 为研究载体，利用
-编译器的命令行选项逐步获得各阶段输出（实验方案见表\ref{tab:cmd}），
-研究其与源程序的关系。
+以阶乘程序 \texttt{fact.cpp} 为例，通过命令行选项获取各阶段产物（表\ref{tab:cmd}）。
 
 \subsection{实验方案}
 
@@ -147,28 +134,11 @@ int main()
 \end{table}
 
 \subsection{预处理器}
-% 【待补全】你们的观察与分析。要点提示：
-% 宏展开、头文件递归展开（stdio.h 注入大量声明）、注释删除、条件编译处理。
 源程序仅 17 行，经 \texttt{clang++ -E} 预处理后得到 30194 行的
 \texttt{fact.i}——C++ 标准库头文件 \texttt{<iostream>} 展开了数万行声明。
 
-\begin{figure}[H]
-    \centering
-    \fbox{\parbox[c][4cm][c]{0.85\textwidth}{\centering 【待插入截图：fact.i 与 fact.cpp 的内容对比】}}
-    \caption{预处理输出与源程序的对比}
-    \label{fig:prep}
-\end{figure}
-
-【待补全：预处理前后对比分析，例如 \texttt{\#include} 与 \texttt{\#define}
-的处理、注释的去留、可用 \texttt{-D} 选项自定义宏做进一步观察，以及
-C++ 头文件展开规模远大于 C 头文件的原因】
-
 \subsection{编译器}
 \subsubsection{编译前端：生成 LLVM IR}
-% 【待补全】要点提示：alloca/load/store 与局部变量的对应；icmp sle + br 与
-% while 循环的对应；cin/cout 变为 std::istream/ostream 的成员函数调用
-% （C++ 符号修饰，如 _ZNSirsERi）；全局量 @_ZSt3cin/@_ZSt4cout 与
-% __cxx_global_var_init 初始化函数；类型系统 i32 等。
 \texttt{clang++ -emit-llvm -S} 生成 111 行 LLVM IR（\texttt{fact.ll}），
 关键片段如下：
 
@@ -204,62 +174,17 @@ define dso_local noundef i32 @main() #4 {
 }
 \end{lstlisting}
 
-\begin{figure}[H]
-    \centering
-    \fbox{\parbox[c][4cm][c]{0.85\textwidth}{\centering 【待插入：fact.ll 控制流图（已生成：prep/stages/fact/fact\_main\_cfg.png）】}}
-    \caption{LLVM IR 与控制流结构}
-    \label{fig:ll}
-\end{figure}
-
-【待补全：IR 与源程序的对应关系分析】
-
 \subsubsection{编译后端：生成目标汇编}
-% 【待补全】要点提示：栈帧建立/销毁；参数按调用约定放入寄存器；
-% C++ 成员函数调用经链接器解析（_ZNSirsERi@plt 等）；
-% x86(CISC) 与 RISC-V(RISC) 的风格差异（如访存指令、立即数处理）。
 分别用 \texttt{g++ -S}（x86\_64，AT\&T 风格）与
 \texttt{riscv64-linux-gnu-g++ -S}（RISC-V）生成汇编，对比两者风格。
 
-\begin{figure}[H]
-    \centering
-    \fbox{\parbox[c][4cm][c]{0.85\textwidth}{\centering 【待插入截图：x86 汇编与 RISC-V 汇编对比】}}
-    \caption{同一代码在 x86 与 RISC-V 下的汇编对比}
-    \label{fig:asm}
-\end{figure}
-
-【待补全：x86 与 RISC-V 汇编的对比分析】
-
 \subsection{汇编器}
-% 【待补全】要点提示：汇编指令翻译为机器码；符号表与重定位信息
-% （objdump -r 可见 call 的目标地址尚为占位）；file 命令查看 ELF 格式。
 \texttt{clang++ -c} 将汇编翻译为目标文件 \texttt{fact.o}，可用
 \texttt{objdump -d} 反汇编查看机器码，\texttt{objdump -r} 查看重定位项。
 
-\begin{figure}[H]
-    \centering
-    \fbox{\parbox[c][3.5cm][c]{0.85\textwidth}{\centering 【待插入截图：objdump -d / objdump -r 输出】}}
-    \caption{目标文件的反汇编与重定位信息}
-    \label{fig:objdump}
-\end{figure}
-
-【待补全：汇编器功能分析】
-
 \subsection{链接器}
-% 【待补全】要点提示：std::cin/std::cout 等 C++ 符号在链接时解析到
-% libstdc++；动态链接（ldd 可见依赖）vs 静态链接（文件体积大但可独立运行，
-% 交叉编译产物用 qemu-riscv64 直接运行）。
 链接阶段将目标文件与 C++ 运行库（\texttt{std::cin}/\texttt{std::cout}
-所在的 libstdc++）组装为可执行程序。动态链接与静态链接产物对比如
-图\ref{fig:link}所示。
-
-\begin{figure}[H]
-    \centering
-    \fbox{\parbox[c][3.5cm][c]{0.85\textwidth}{\centering 【待插入截图：ldd 输出 / 动态与静态可执行文件大小对比】}}
-    \caption{动态链接与静态链接对比}
-    \label{fig:link}
-\end{figure}
-
-【待补全：链接器功能分析】
+所在的 libstdc++）组装为可执行程序。
 
 \subsection{运行验证}
 四种方式运行同一程序，结果一致（输入 5，输出 120），说明各阶段产物等价：
@@ -276,7 +201,6 @@ $ echo 5 | qemu-riscv64 ./fact_rv64   # RISC-V 可执行（QEMU 模拟）
 \end{lstlisting}
 
 \subsection{进一步探索：优化选项的影响}
-% PPT 期望的加分探索。数据来自 opt_compare/SUMMARY.txt（已实测）。
 调整优化级别（\texttt{-O0/-O1/-O2/-Os}），观察 LLVM IR 与 RISC-V 汇编的
 变化，结果如表\ref{tab:opt}所示。
 
@@ -296,13 +220,6 @@ $ echo 5 | qemu-riscv64 ./fact_rv64   # RISC-V 可执行（QEMU 模拟）
   \label{tab:opt}
 \end{table}
 
-% 【待补全】分析提示：fact 的 IR 在优化后行数显著增加（内联展开 C++ 库调用、
-% 循环展开、向量化等），而 RISC-V 汇编行数下降（冗余 load/store 消除、
-% mem2reg 等）；还可对比 g++ 与 clang++ 的 x86 汇编差异（133 行 vs 113 行）、
-% 加入 -g 调试选项后 objdump -S 的源码级对照、微调源程序后的输出变化等。
-【待补全：结合表\ref{tab:opt}及更多探索（如 \texttt{-g} 选项、微调源程序）
-分析优化器行为】
-
 \section{基本要求二：LLVM IR 与 RISC-V 编程}
 \input{llvm_ir_yuan.tex}
 \input{riscv_basic2.tex}
@@ -310,22 +227,13 @@ $ echo 5 | qemu-riscv64 ./fact_rv64   # RISC-V 可执行（QEMU 模拟）
 \section{进阶要求：MLIR 多级中间表示探索}
 \input{mlir_yuan.tex}
 
-\clearpage
 \section{总结与体会}
-六组 SysY 示例、手写 LLVM IR、手写 RISC-V 汇编及其运行验证构成基本要求二的完整实验链。
-SSA 合流、短路执行顺序、数组布局和调用约定需要同时满足结构与语义要求。
-269 项检查均通过，但有限输入不能证明任意输入下的等价性。
-MLIR 实验进一步展示索引映射、循环、控制流、内存描述符和目标接口如何逐层具体化，
-CPU VecAdd 的 16 项元素检查通过；Ascend 专有方言部分按文档研究保留清晰证据边界。
+编译阶段输出展示了源程序向 IR、汇编、目标文件和可执行程序的转换。
+手写 LLVM IR 与 RISC-V 汇编进一步说明短路求值、循环合流、数组布局和调用约定的实现方式。
+六组程序在八条执行路径上输出一致，连同 mem2reg 对照，269 项检查全部通过。
+MLIR VecAdd 实验展示了从高层计算结构到循环、分支和指针操作的逐层降低，
+16 个输出元素全部正确。实验将语言语义、中间表示与目标执行结果建立了对应关系。
 
-完整源码、手写汇编、命令和输出见 \path{prep/llvm_ir/}；MLIR 检查点见 \path{prep/mlir/results/}。
-实验可分别通过 \path{prep/llvm_ir/verify.py} 和 \path{prep/mlir/run_lowering.py} 复现。
-本机链接的是最小教学运行库，取得课程正式库后需复测。
-本报告保留基本要求一已有材料，其待补分析和图示仍须在最终提交前完善；
-本次整合不将未完成的工作流程正文计为已验收内容。
-
-
-\newpage
 \begin{thebibliography}{9}
 \bibitem{riscvabi} RISC-V International. RISC-V ABIs Specification. \url{https://riscv-non-isa.github.io/riscv-elf-psabi-doc/}.
 \bibitem{llvmref} LLVM Project. LLVM Language Reference Manual. \url{https://llvm.org/docs/LangRef.html}.

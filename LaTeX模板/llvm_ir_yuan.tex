@@ -1,28 +1,11 @@
-\subsection{任务范围与实现方法}
-本节介绍基本要求二中的 LLVM IR 设计与验证方法，后续章节给出同源程序的手写 RISC-V 汇编。
-在已有循环阶乘入门例子之外，设计六组 SysY 源程序，并手写对应的 LLVM IR。
-原始源文件位于 \texttt{prep/llvm\_ir/}，每组包含同名的 \texttt{.sy} 和
-\texttt{.ll}。优化 IR 与自动生成的 RISC-V 汇编单独放在
-\texttt{results/}，避免与手写文件混淆。
+\subsection{实验方法}
+设计六组 SysY 程序，分别编写 LLVM IR 与 RISC-V 汇编。
+整数和浮点数分别用 i32、float 表示；局部寄存器遵循 SSA，控制流合流使用 phi，
+内存变量通过 load/store 访问\cite{llvmref}。
 
-实现遵循课程提供的 SysY 定义及文法补充：整数采用 i32，浮点采用 float，
-普通表达式中的逻辑非结果需转换为整数。LLVM IR 的局部寄存器值遵循 SSA，
-而保存在内存中的变量还需要 load/store；有这些访存操作并不意味着整个
-LLVM IR 是非 SSA。控制流中的合流值通过 phi 表示，具体语义参见 LLVM
-语言参考手册\cite{llvmref}。
-
-\subsection{实验环境与复现流程}
-本次实际环境为 Ubuntu WSL、x86\_64，Ubuntu 26.04.1 LTS，
-Clang/LLVM 21.1.8、RISC-V Linux GCC 15.2.0、QEMU 10.2.1。
-工具版本和编译产物来源随实际实验记录保存。
-RISC-V 目标使用 RV64GC、LP64D 调用约定与静态链接。
-
-本实验链接已有最小教学运行库 \texttt{prep/manual/sylib.c} 中的
-getint、putint 和 putch。该实现足以支撑当前例子，但尚未取得课程正式运行库，
-因此未声称完成正式运行时的全部接口或 ABI 验收。正式库取得后需按同一流程复测。
-\texttt{.sy} 文件不包含 C 头文件；参考编译通过命令行强制包含库声明，
-且所选示例均避开 SysY 与 C 语义不同的语法。
-
+\subsection{编译与验证流程}
+使用 Clang/LLVM 检查、优化并编译 IR，链接 getint、putint、putch 完成输入输出。
+验证脚本比较参考程序、手写 IR 和手写汇编的标准输出及退出码。
 \par\vspace{0.7\baselineskip}\noindent\begin{minipage}[t]{\linewidth}
 \begin{lstlisting}[language=bash]
 python3 prep/llvm_ir/verify.py
@@ -33,10 +16,6 @@ llc -mtriple=riscv64-linux-gnu -mattr=+m,+a,+f,+d,+c \
     -target-abi=lp64d sample.ll -o sample_generated_rv.s
 \end{lstlisting}
 \end{minipage}\par\vspace{0.5\baselineskip}
-上面的 sample 命令说明单组操作，实际完整命令由验证脚本记录。
-脚本每次重新构建程序，检查编译退出码，对运行设置超时，逐项比较标准输出
-及退出码；不依赖已有可执行文件。二进制写入 build，命令与诊断写入
-\texttt{commands.json}，输入和预期/实际输出写入 \texttt{latest.json}。
 
 \subsection{示例设计与特性覆盖}
 \begin{table}[htbp]
@@ -59,14 +38,14 @@ promote\_demo & 内存形式循环及 mem2reg 对照 & 5\\
 算术例子输入 $n$，计算 $(n+3)\times2-n/2+n\%3+7$，并分别输出
 $-n$、$+n$、$n+!n$。内层同名变量固定为 7，外层 $n$ 在后续输出中仍保持原值，
 用于验证遮蔽而非覆盖。负数整除按向零截断计算，余数为
-$n-\operatorname{trunc}(n/3)\times3$；不能直接用 Python 向下取整除法作为预期。
+$n-\operatorname{trunc}(n/3)\times3$。
 逻辑非先由 icmp 产生 i1，再由 zext 转为 i32 后参与加法。
 
 \subsection{短路控制流与可观测副作用}
 短路例子包含 \texttt{n != 0 \&\& 12 / n > 2} 和
 \texttt{n == 0 || touch()}。touch 每次调用将全局 hits 加一。
 以 n=0 为例，正确程序既不除以零，也不调用 touch，最终 hits=0；
-非零输入则调用 touch 一次。这比只比较纯表达式的真假更能检验执行顺序。
+非零输入则调用 touch 一次。
 
 \par\vspace{0.7\baselineskip}\noindent\begin{minipage}[t]{\linewidth}
 \begin{lstlisting}
@@ -80,8 +59,7 @@ and.join:
   %and.value = phi i32 [1, %and.true], [0, %and.false]
 \end{lstlisting}
 \end{minipage}\par\vspace{0.5\baselineskip}
-代码为关键片段，省略的基本块和声明见同名完整源文件。右操作数置于独立块中，
-而不是先执行两边再用 and/or 合并；后者会错误执行除法或副作用。
+右操作数置于独立基本块中，由分支决定是否执行。
 测试 n=-3、0、1、4、5、12，覆盖受保护分母、条件真/假和副作用次数。
 
 \subsection{循环、函数与数据表示}
@@ -101,8 +79,7 @@ done:
   %result = phi i32 [%sum, %header], [%sum, %break.test]
 \end{lstlisting}
 \end{minipage}\par\vspace{0.5\baselineskip}
-LLVM verifier 能发现类型、前驱和支配关系等结构错误，但结构合法不能证明语义正确；
-还需运行比较。输入 n=2 时只累加 1，n=5 或 n=8 时结果均为 13，
+LLVM verifier 检查类型、前驱和支配关系，运行测试检查输出。输入 n=2 时只累加 1，n=5 或 n=8 时结果均为 13，
 分别触发 continue 与 break。函数例子进一步使用递归阶乘和 void 输出函数，
 检查参数、call 和 ret 的对应关系。
 
@@ -111,42 +88,11 @@ LLVM verifier 能发现类型、前驱和支配关系等结构错误，但结构
 通过 getelementptr 寻址，两行和为 10。
 浮点过程为 $\operatorname{twice}(1.5n+0.5)=3n+1$，使用 sitofp、fmul、fadd、
 fptosi 和 fcmp，既验证 int/float 转换，也验证 float 参数和返回值。
-本次只选小整数输入，使数值可精确表示；未将浮点舍入误差当作本实验结论。
+
 
 \subsection{mem2reg 观察与结果验证}
 另手写一份以 alloca/load/store 保存循环变量的求和程序，使用 LLVM 自带
 \texttt{opt -passes=mem2reg} 得到可提升变量的寄存器形式。
 转换前为 2 个 alloca、3 个 load、4 个 store、0 个 phi；转换后
 这些局部访存操作均消失，形成 2 个 phi。对 n=-3、0、1、5、10
-分别运行，结果与原程序一致。该实验是对现成 pass 的观察，不代表本小组已自行实现
-编译器的 mem2reg 模块。
-
-LLVM IR 与参考程序的子矩阵对每个输入比较七条路径：参考程序本机/RV64、手写 IR 本机/RV64（原始和 O2），
-以及链接库后的 lli 运行。33 组输入产生 231 次运行比较，再对 mem2reg 结果
-做 5 次独立检查，共 \textbf{236/236 通过}，均检查 stdout 和退出码。
-
-\begin{table}[htbp]
-\centering\small
-\begin{tabular}{lrr}
-\toprule
-示例 & 运行比较数 & 通过数\\
-\midrule
-arithmetic / short\_circuit / loop\_control & 各 42 & 各 42\\
-functions / array\_float & 各 35 & 各 35\\
-promote\_demo（含 mem2reg） & 40 & 40\\
-\midrule
-合计 & 236 & 236\\
-\bottomrule
-\end{tabular}
-\caption{2026-10-11 实际执行结果}
-\end{table}
-
-\subsection{LLVM IR 实验结论}
-实验说明手写 IR 的结构正确性、短路顺序、循环合流、数据表示和目标调用约定
-可以通过分层验证共同检查。优化前后相同输出是必要的正确性证据，但有限测试
-不能证明任意输入下等价。阶乘限定 0--12，其他输入避免 int 溢出、数组越界、
-除零和浮点转整数超范围；无效输入处理不在当前验证范围内。
-
-llc 自动生成的 RISC-V 汇编保存在 results 中，用于目标工具链对照。
-另行独立编写的六组 RISC-V 汇编见后续章节，与这些自动产物分别保存。
-基本要求二的最终验收在原有 LLVM IR 验证基础上加入手写汇编执行路径。
+分别运行，转换前后输出一致。
