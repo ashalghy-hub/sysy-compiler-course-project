@@ -1,0 +1,32 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8">
+<style>*{box-sizing:border-box}body{margin:0;background:#fff;color:#152238;font-family:"Microsoft YaHei",sans-serif}
+#capture{padding:24px;width:100%;max-width:1180px}h1{font-size:25px;margin:0 0 18px}.panels{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+section{border:1px solid #b7c7d9;border-radius:5px;overflow:hidden}h2{margin:0;padding:12px 15px;background:#edf3f8;font-size:18px;font-weight:600}
+pre{margin:0;padding:16px;font:17px/1.5 Consolas,"Courier New",monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:#fff}
+.note{font-size:14px;color:#586b7f;margin-top:14px}</style><div id="capture"><h1>短路条件：SysY 源码与手写 LLVM IR</h1><div class="panels"><section><h2>short_circuit.sy</h2><pre>  2  int hits = 0;
+  3  int touch() { hits = hits + 1; return 1; }
+  4  int main() {
+  5      int n = getint();
+  6      if (n != 0 &amp;&amp; 12 / n &gt; 2) putint(1); else putint(0);
+  7      putch(10);
+  8      if (n == 0 || touch()) putint(2); else putint(3);
+  9      putch(10);
+ 10      putint(hits); putch(10);
+ 11      return 0;
+ 12  }</pre></section><section><h2>short_circuit.ll（条件及合流）</h2><pre> 14  entry:
+ 15    %n = call i32 @getint()
+ 16    %nonzero = icmp ne i32 %n, 0
+ 17    br i1 %nonzero, label %and.rhs, label %and.false
+ 18  and.rhs:
+ 19    %q = sdiv i32 12, %n
+ 20    %large = icmp sgt i32 %q, 2
+ 21    br i1 %large, label %and.true, label %and.false
+ 22  and.true:
+ 23    br label %and.join
+ 24  and.false:
+ 25    br label %and.join
+ 26  and.join:
+ 27    %and.value = phi i32 [1, %and.true], [0, %and.false]
+ 28    call void @putint(i32 %and.value)
+ 29    call void @putch(i32 10)</pre></section></div>
+<div class="note">项目文件与已保存运行记录的只读视图</div></div></html>

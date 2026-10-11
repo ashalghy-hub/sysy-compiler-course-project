@@ -1,6 +1,7 @@
 \documentclass[UTF8,a4paper,10pt]{ctexart}
 \usepackage[left=3.17cm,right=3.17cm,top=2.74cm,bottom=2.74cm]{geometry}
 \usepackage{amsmath,array,graphicx,float,booktabs,xcolor,listings}
+\usepackage{tabularx,tikz}
 \usepackage[colorlinks,linkcolor=black,urlcolor=blue,citecolor=black]{hyperref}
 \usepackage{fancyhdr}
 \setlength{\headheight}{15pt}
@@ -93,134 +94,9 @@ RISC-V GCC 15.2.0，QEMU 10.2.1。MLIR 21.1.8 工具从 Ubuntu 官方源下载�
 
 \section{基础要求}
 \subsection{了解编译器工作过程}
-
-以阶乘程序 \texttt{fact.cpp} 为例，通过命令行选项获取各阶段产物（表\ref{tab:cmd}）。
-
-\subsubsection{实验方案}
-
-\begin{lstlisting}[title={研究载体：阶乘程序 fact.cpp（PPT 示例）},language={C++}]
-#include <iostream>
-using namespace std;
-int main()
-{
-    int i, n, f;
-
-    cin >> n;
-    i = 2;
-    f = 1;
-    while (i <= n)
-    {
-        f = f * i;
-        i = i + 1;
-    }
-    cout << f << endl;
-}
-\end{lstlisting}
-
-\begin{table}[!htbp]
-  \centering
-  \begin{tabular}{lll}
-  \toprule
-  阶段 & 命令选项 & 产物\\
-  \midrule
-  预处理 & \texttt{clang++ -E} & \texttt{fact.i}\\
-  编译（前端） & \texttt{clang++ -emit-llvm -S} & \texttt{fact.ll}（LLVM IR）\\
-  编译（后端） & \texttt{g++ -S} / \texttt{riscv64-linux-gnu-g++ -S} & \texttt{fact.s}（汇编）\\
-  汇编 & \texttt{clang++ -c} & \texttt{fact.o}（目标文件）\\
-  链接 & \texttt{g++} / \texttt{riscv64-linux-gnu-g++ -static} & 可执行程序\\
-  运行验证 & \texttt{lli} / \texttt{qemu-riscv64} & 运行结果\\
-  \bottomrule
-  \end{tabular}
-  \caption{各编译阶段对应的命令选项与产物}
-  \label{tab:cmd}
-\end{table}
-
-\subsubsection{预处理器}
-源程序仅 17 行，经 \texttt{clang++ -E} 预处理后得到 30194 行的
-\texttt{fact.i}——C++ 标准库头文件 \texttt{<iostream>} 展开了数万行声明。
-
-\subsubsection{编译器}
-\paragraph{编译前端：生成 LLVM IR}
-\texttt{clang++ -emit-llvm -S} 生成 111 行 LLVM IR（\texttt{fact.ll}），
-关键片段如下：
-
-\begin{lstlisting}[title={fact.ll 关键片段}]
-@_ZSt3cin  = external global %"class.std::basic_istream", align 8
-@_ZSt4cout = external global %"class.std::basic_ostream", align 8
-
-define dso_local noundef i32 @main() #4 {
-  %1 = alloca i32, align 4      ; return value
-  %2 = alloca i32, align 4      ; i
-  %3 = alloca i32, align 4      ; n
-  %4 = alloca i32, align 4      ; f
-  store i32 0, i32* %1, align 4
-  %5 = call ... @_ZNSirsERi(@_ZSt3cin, i32* %3)      ; cin >> n
-  store i32 2, i32* %2, align 4                      ; i = 2
-  store i32 1, i32* %4, align 4                      ; f = 1
-  br label %6
-6:                                                   ; while (i <= n)
-  %7 = load i32, i32* %2, align 4
-  %8 = load i32, i32* %3, align 4
-  %9 = icmp sle i32 %7, %8
-  br i1 %9, label %10, label %16
-10:
-  %11 = load i32, i32* %4
-  %12 = load i32, i32* %2
-  %13 = mul nsw i32 %11, %12                         ; f = f * i
-  ...
-16:
-  %17 = load i32, i32* %4, align 4
-  %18 = call ... @_ZNSolsEi(@_ZSt4cout, i32 %17)     ; cout << f
-  %19 = call ... @_ZNSolsEPFRSoS_E(%18, ... endl)    ; << endl
-  ret i32 %20
-}
-\end{lstlisting}
-
-\paragraph{编译后端：生成目标汇编}
-分别用 \texttt{g++ -S}（x86\_64，AT\&T 风格）与
-\texttt{riscv64-linux-gnu-g++ -S}（RISC-V）生成汇编，对比两者风格。
-
-\subsubsection{汇编器}
-\texttt{clang++ -c} 将汇编翻译为目标文件 \texttt{fact.o}，可用
-\texttt{objdump -d} 反汇编查看机器码，\texttt{objdump -r} 查看重定位项。
-
-\subsubsection{链接器}
-链接阶段将目标文件与 C++ 运行库（\texttt{std::cin}/\texttt{std::cout}
-所在的 libstdc++）组装为可执行程序。
-
-\subsubsection{运行验证}
-四种方式运行同一程序，结果一致（输入 5，输出 120），说明各阶段产物等价：
-
-\begin{lstlisting}[title={运行验证},language=bash]
-$ echo 5 | ./fact_x86                 # x86 可执行（g++ 链接产物）
-120
-$ echo 5 | lli fact.ll                # LLVM IR 解释执行
-120
-$ echo 5 | ./fact_fromll_x86          # 由 IR 直接重编译的可执行
-120
-$ echo 5 | qemu-riscv64 ./fact_rv64   # RISC-V 可执行（QEMU 模拟）
-120
-\end{lstlisting}
-
-\subsubsection{进一步探索：优化选项的影响}
-调整优化级别（\texttt{-O0/-O1/-O2/-Os}），观察 LLVM IR 与 RISC-V 汇编的
-变化，结果如表\ref{tab:opt}所示。
-
-\begin{table}[!htbp]
-  \centering
-  \begin{tabular}{lcccc}
-  \toprule
-  程序 / 产物 & -O0 & -O1 & -O2 & -Os\\
-  \midrule
-  fact：LLVM IR 行数 & 111 & 163 & 250 & 152\\
-  fact：RISC-V 汇编行数 & 156 & 97 & 146 & 89\\
-  fib：LLVM IR 行数 & 124 & 248 & 247 & 153\\
-  fib：RISC-V 汇编行数 & 177 & 156 & 231 & 118\\
-  \bottomrule
-  \end{tabular}
-  \caption{不同优化级别下 LLVM IR 与 RISC-V 汇编的规模对比}
-  \label{tab:opt}
-\end{table}
+\begingroup
+\input{compiler_workflow_zlf.tex}
+\endgroup
 
 \subsection{熟悉 LLVM IR 中间语言}
 \begingroup
@@ -248,7 +124,9 @@ $ echo 5 | qemu-riscv64 ./fact_rv64   # RISC-V 可执行（QEMU 模拟）
 MLIR VecAdd 实验展示了从高层计算结构到循环、分支和指针操作的逐层降低，
 16 个输出元素全部正确。实验将语言语义、中间表示与目标执行结果建立了对应关系。
 
+\clearpage
 \begin{thebibliography}{9}
+\small\setlength{\itemsep}{0pt}
 \bibitem{riscvabi} RISC-V International. RISC-V ABIs Specification. \url{https://riscv-non-isa.github.io/riscv-elf-psabi-doc/}.
 \bibitem{llvmref} LLVM Project. LLVM Language Reference Manual. \url{https://llvm.org/docs/LangRef.html}.
 \bibitem{ascendexample} AscendNPU IR. 快速入门示例. \url{https://ascendnpu-ir.gitcode.com/zh_cn/sources/introduction/quick_start/examples_zh.html}.

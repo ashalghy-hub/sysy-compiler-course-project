@@ -3,6 +3,29 @@
 整数和浮点数分别用 i32、float 表示；局部寄存器遵循 SSA，控制流合流使用 phi，
 内存变量通过 load/store 访问\cite{llvmref}。
 
+\subsection{类型、值与源语言语义的对应}
+手写 IR 将源语言中的变量、条件和地址分别表示为有类型的值。
+比较指令产生 i1，而输出函数接收 i32，因此布尔结果在输出或参与整数运算前使用 zext。
+块作用域中的同名变量分配不同的值或存储位置，离开内层块后继续引用外层变量。
+\begin{table}[htbp]
+\centering\small
+\begin{tabular}{p{0.24\linewidth}p{0.27\linewidth}p{0.35\linewidth}}
+\toprule
+源语言对象 & 本实验的 IR 表示 & 对应操作\\
+\midrule
+int 及整数常量 & i32 & add、sub、mul、sdiv、srem\\
+条件与逻辑结果 & i1；需要时扩展为 i32 & icmp、fcmp、zext、br\\
+float 及浮点参数 & float & fadd、fmul、sitofp、fptosi\\
+数组对象与形参 & 数组类型、ptr 地址 & alloca、getelementptr、load\\
+可变全局 hits & 全局 i32 存储 & load / store 保留调用副作用\\
+\bottomrule
+\end{tabular}
+\caption{六组示例中的类型与操作映射}
+\end{table}
+例如输入 $n=-7$，sdiv 的 $n/2$ 为 $-3$，srem 的 $n\%3$ 为 $-1$，
+算术式输出 1；随后输出 7、$-7$、$-7$，检查单目运算与外层变量值。
+算术与地址操作分别使用适当的位宽，使变量计算和数组寻址具有明确类型。
+
 \subsection{编译与验证流程}
 使用 Clang/LLVM 检查、优化并编译 IR，链接 getint、putint、putch 完成输入输出。
 验证脚本比较参考程序、手写 IR 和手写汇编的标准输出及退出码。
@@ -47,22 +70,18 @@ $n-\operatorname{trunc}(n/3)\times3$。
 以 n=0 为例，正确程序既不除以零，也不调用 touch，最终 hits=0；
 非零输入则调用 touch 一次。
 
-\par\vspace{0.7\baselineskip}\noindent\begin{minipage}[t]{\linewidth}
-\begin{lstlisting}
-%nonzero = icmp ne i32 %n, 0
-br i1 %nonzero, label %and.rhs, label %and.false
-and.rhs:
-  %q = sdiv i32 12, %n
-  %large = icmp sgt i32 %q, 2
-  br i1 %large, label %and.true, label %and.false
-and.join:
-  %and.value = phi i32 [1, %and.true], [0, %and.false]
-\end{lstlisting}
-\end{minipage}\par\vspace{0.5\baselineskip}
-右操作数置于独立基本块中，由分支决定是否执行。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figures/short_circuit.jpg}
+\caption{短路示例源码与手写 LLVM IR 的条件分支、phi 合流截图}
+\label{fig:short-ir}
+\end{figure}
+
+图\ref{fig:short-ir}中，右操作数置于独立基本块中，由分支决定是否执行。
 测试 n=-3、0、1、4、5、12，覆盖受保护分母、条件真/假和副作用次数。
 
-\subsection{循环、函数与数据表示}
+\subsection{循环合流与 SSA 值传递}
 循环例子逐个处理 1 到 n，跳过 2，在数值超过 5 时退出。
 continue 的边直接回到循环头，break 的边直接进入出口。
 循环头分别对 i 和 sum 建立 phi，continue 边保持 sum，普通边传入累加后的值。
@@ -83,11 +102,62 @@ LLVM verifier 检查类型、前驱和支配关系，运行测试检查输出。
 分别触发 continue 与 break。函数例子进一步使用递归阶乘和 void 输出函数，
 检查参数、call 和 ret 的对应关系。
 
+phi 的每个输入由“值、前驱块”配对，进入当前块时按实际前驱选择。
+循环首次进入时，i 和 sum 都来自 entry；跳过 2 时，回边更新 i 并保留原 sum；
+执行累加时，两者分别取 next 和 added。
+\begin{table}[htbp]
+\centering\small
+\begin{tabular}{lll}
+\toprule
+进入 header 的前驱 & i 的输入 & sum 的输入\\
+\midrule
+entry & 0 & 0\\
+skip（continue） & next & 原 sum\\
+accumulate（普通回边） & next & added\\
+\bottomrule
+\end{tabular}
+\caption{循环头 phi 与控制流边的对应关系}
+\end{table}
+输入 8 时，在处理数值 6 的 break 路径离开循环，出口选择当前 sum=13，
+不会执行对 6 的累加。这里同时区分了循环条件退出与循环体内的提前退出。
+
+\subsection{递归函数与 void 返回}
+factorial 的参数、返回值和乘法均为 i32。基例直接返回 1，递归分支计算 $n-1$，
+调用自身后将返回值与当前层的 n 相乘。以下为实际手写函数：
+\par\vspace{0.7\baselineskip}\noindent\begin{minipage}[t]{\linewidth}
+\lstinputlisting[firstline=5,lastline=16]{../prep/llvm_ir/functions.ll}
+\end{minipage}\par\vspace{0.5\baselineskip}
+递归调用产生新的 child 值，当前层参数 n 在调用返回后仍用于乘法。
+IR 中无需手动保存返回地址，目标代码生成阶段根据调用约定完成寄存器和栈帧安排。
+emit 的函数类型为 void(i32)，内部依次调用 putint 和 putch，再以 ret void 结束；
+main 调用 emit 后以 ret i32 0 返回进程状态。
+输入 0、1 检查基例，5、7、12 检查递归计算，输出分别为 1、1、120、5040、479001600。
+
+\subsection{二维数组寻址与浮点转换}
+
 数组/浮点例子将 \texttt{int a[2][3]={{1,2,3},{4}}} 表示为二维数组对象，
 初始化第二行剩余元素为零。数组实参传地址，按 \texttt{[3 x i32]} 的行类型
 通过 getelementptr 寻址，两行和为 10。
 浮点过程为 $\operatorname{twice}(1.5n+0.5)=3n+1$，使用 sitofp、fmul、fadd、
 fptosi 和 fcmp，既验证 int/float 转换，也验证 float 参数和返回值。
+
+row\_sum 将行、列索引扩展为 i64 后计算元素地址。
+其 getelementptr 的源元素类型为 \texttt{[3 x i32]}，
+第一层索引跨越整行，第二层索引定位行内元素。实际地址片段为：
+\par\vspace{0.7\baselineskip}\noindent\begin{minipage}[t]{\linewidth}
+\begin{lstlisting}
+%j64 = sext i32 %j to i64
+%element = getelementptr [3 x i32], ptr %a, i64 %row64, i64 %j64
+%value = load i32, ptr %element, align 4
+\end{lstlisting}
+\end{minipage}\par\vspace{0.5\baselineskip}
+getelementptr 只计算地址，load 才读取元素；本例的字节偏移为 $12r+4j$。
+两行分别得到 6 和 4，合计 10，第二行的两个零验证了部分初始化的补零行为。
+
+浮点路径先将 n 转为 float，计算 $1.5n+0.5$，再通过带浮点参数和返回值的 twice 加倍。
+负输入 $n=-3$ 得到 $-8.0$，fptosi 输出 $-8$，正值判断输出 0；
+输入 2 得到 $7.0$，对应整数 7 与判断值 1。
+数组总和、转换结果和布尔结果分别输出，便于区分寻址错误与计算错误。
 
 
 \subsection{mem2reg 观察与结果验证}
@@ -96,3 +166,18 @@ fptosi 和 fcmp，既验证 int/float 转换，也验证 float 参数和返回�
 转换前为 2 个 alloca、3 个 load、4 个 store、0 个 phi；转换后
 这些局部访存操作均消失，形成 2 个 phi。对 n=-3、0、1、5、10
 分别运行，转换前后输出一致。
+
+优化后的两个 phi 分别对应 index 与 sum。循环开始时 $i=0,s=0$，
+每次迭代执行 $s'=s+i$、$i'=i+1$，因此循环头保持
+$s=i(i-1)/2$。正输入 n 的结果为 $n(n-1)/2$，非正输入直接输出 0。
+实测 n=-3、0、1、5、10 的输出分别为 0、0、0、10、45。
+这一对照同时检查了局部存储消除、循环回边与计算结果的保持。
+
+优化前后的实际文件截图见图\ref{fig:mem2reg}。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figures/mem2reg.jpg}
+\caption{mem2reg 优化前的局部访存与优化后的 phi 节点截图}
+\label{fig:mem2reg}
+\end{figure}

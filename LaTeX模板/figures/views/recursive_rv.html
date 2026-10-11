@@ -1,0 +1,33 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8">
+<style>*{box-sizing:border-box}body{margin:0;background:#fff;color:#152238;font-family:"Microsoft YaHei",sans-serif}
+#capture{padding:24px;width:100%;max-width:1180px}h1{font-size:25px;margin:0 0 18px}.panels{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+section{border:1px solid #b7c7d9;border-radius:5px;overflow:hidden}h2{margin:0;padding:12px 15px;background:#edf3f8;font-size:18px;font-weight:600}
+pre{margin:0;padding:16px;font:17px/1.5 Consolas,"Courier New",monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:#fff}
+.note{font-size:14px;color:#586b7f;margin-top:14px}</style><div id="capture"><h1>递归调用：手写汇编与运行记录</h1><div class="panels"><section><h2>handwritten/functions_rv.s</h2><pre>  5  factorial:
+  6      li t0,1
+  7      ble a0,t0,.Lbase
+  8      addi sp,sp,-16
+  9      sd ra,8(sp)
+ 10      sd s0,0(sp)
+ 11      mv s0,a0
+ 12      addiw a0,a0,-1
+ 13      call factorial
+ 14      mulw a0,s0,a0
+ 15      ld s0,0(sp)
+ 16      ld ra,8(sp)
+ 17      addi sp,sp,16
+ 18      ret
+ 19  .Lbase:
+ 20      li a0,1
+ 21      ret
+ 22  .size factorial,.-factorial</pre></section><section><h2>results/latest.json（对应测试）</h2><pre>{
+  &quot;program&quot;: &quot;functions&quot;,
+  &quot;variant&quot;: &quot;handwritten_rv&quot;,
+  &quot;input&quot;: 7,
+  &quot;expected&quot;: &quot;5040\n&quot;,
+  &quot;stdout&quot;: &quot;5040\n&quot;,
+  &quot;stderr&quot;: &quot;&quot;,
+  &quot;returncode&quot;: 0,
+  &quot;passed&quot;: true
+}</pre></section></div>
+<div class="note">项目文件与已保存运行记录的只读视图</div></div></html>

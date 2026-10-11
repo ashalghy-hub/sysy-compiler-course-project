@@ -1,0 +1,222 @@
+% Imported from zlf内容.rar: compiler workflow chapter only.
+% Definitions are local to the group surrounding this input.
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcommand{\experimentshot}[2]{%
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth,height=0.34\textheight,keepaspectratio]{zlf/screenshots/#1.png}
+\caption{#2}\label{fig:zlf-shot-#1}
+\end{figure}
+}
+
+\subsubsection{实验程序与步骤}
+选用阶乘程序作为实验对象，输入 $n$，输出整数阶乘。验证输入限制在 $0\leq n\leq12$，
+覆盖零次循环、普通循环与较深循环。
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[every node/.style={draw,rounded corners,minimum height=8mm,font=\small},>=stealth]
+\node (s) at (0,0) {源程序};
+\node (p) at (2.5,0) {预处理 .i};
+\node (c) at (5.1,0) {编译 .s};
+\node (a) at (7.5,0) {汇编 .o};
+\node (l) at (9.9,0) {链接 ELF};
+\draw[->] (s)--(p);\draw[->] (p)--(c);\draw[->] (c)--(a);\draw[->] (a)--(l);
+\end{tikzpicture}
+\caption{从源程序到可执行文件的主要阶段}
+\end{figure}
+\begin{table}[htbp]
+\centering\small
+\begin{tabularx}{\textwidth}{lYl}
+\toprule 阶段 & 实验命令选项 & 主要产物\\\midrule
+预处理 & \texttt{clang++ -E} & .i\\
+词法分析 & \texttt{-Xclang -dump-tokens} & token 文本\\
+语法分析 & \texttt{-Xclang -ast-dump} & AST 文本\\
+语义检查 & \texttt{clang++ -fsyntax-only} & 错误诊断\\
+中间代码 & \texttt{clang++ -S -emit-llvm} & .ll\\
+优化 & \texttt{opt -passes=mem2reg,instcombine} & 优化后的 .ll\\
+代码生成 & \texttt{g++ -S}；交叉工具链 \texttt{-S} & x86／RV64 .s\\
+汇编 & \texttt{clang++ -c fact\_explicit.s} & 可重定位 .o\\
+链接 & \texttt{g++}；对照 \texttt{-static} & 可执行 ELF\\
+观察工具 & \texttt{objdump -d/-r/-S}、\texttt{nm}、\texttt{readelf}、\texttt{ldd} & 符号、重定位等\\
+\bottomrule
+\end{tabularx}
+\caption{阶段观察方法}\label{tab:zlf-cmd}
+\end{table}
+
+\subsubsection{预处理：头文件、宏与条件编译}
+\texttt{fact.cpp} 共 17 行，预处理输出 \texttt{fact.i} 共 30194 行。
+新增内容主要来自 \texttt{iostream} 及其递归包含的类型、函数和模板声明；
+文件开头的行标记用于关联展开内容的原始文件位置。预处理不计算阶乘，
+而是在词法及语法处理前展开包含文件、宏和条件编译分支。
+独立宏实验将 STEP(x) 定义为 ((x)+1)，由 MODE 决定保留 STEP(1) 或 STEP(4)。
+
+\experimentshot{02-preprocessing}{预处理与条件编译结果}
+
+两份实际输出均不含原注释、\texttt{\#define} 或 \texttt{\#if} 指令；
+\texttt{STEP} 被替换为带括号的表达式，\texttt{-DMODE} 决定保留哪个源分支。
+\texttt{-P} 仅移除行标记以方便比较，并不改变程序计算。
+
+\subsubsection{编译器前端}
+\paragraph{词法分析}
+
+token 转储共 126745 行，包含头文件 token 和 EOF。每行记录类别、拼写及源位置。
+例如 cin、>>、n、分号分别对应 identifier、greatergreater、identifier、semi。
+
+词法阶段识别名字、数字、关键字与操作符，但不会根据名字是否声明判断程序正确性。
+\texttt{>>} 被作为一个多字符 token；它在此处最终调用流提取运算符，
+该含义需要后续类型与重载解析确定，不能仅根据 token 拼写认为它执行整数右移。
+
+\paragraph{语法分析}
+使用 \texttt{-ast-dump-filter=main} 过滤标准库树节点，观察 main 的结构。
+
+\experimentshot{04-ast}{main 的 AST 结构}
+
+源码中的语句顺序对应语句块的子节点顺序，while 包含条件及循环体，乘法位于赋值右侧。
+树结构表达了嵌套关系与优先级。Clang 的 AST 转储同时携带类型、隐式转换和引用信息，
+因而并非只有语法分析结果，也已经体现部分语义分析。
+
+\paragraph{语义检查与语法错误的区别}
+编写四个独立小程序，使用 \texttt{-fsyntax-only} 运行前端检查。
+该参数包含语法与语义检查，不能将全部诊断都归为语法错误。
+\begin{table}[htbp]
+\centering\small
+\begin{tabularx}{\textwidth}{lYc}
+\toprule 用例 & 实测诊断或行为 & 退出状态\\\midrule
+合法调用 & \texttt{square(3)}，无诊断 & 0\\
+未声明名字 & \texttt{use of undeclared identifier 'unknown'} & 1\\
+参数类型错误 & \texttt{no matching function for call to 'square'} & 1\\
+缺少表达式 & \texttt{int x = ;}，\texttt{expected expression} & 1\\
+\bottomrule
+\end{tabularx}
+\caption{前端错误分类实验}
+\end{table}
+
+参数类型错误用例 \texttt{square("abc")} 具有合法的函数调用结构，但字符串不能转换为形参要求的 int。
+编译器给出候选函数不可用、\texttt{const char[4]} 无法转换为 int 的诊断。
+未声明变量的程序同样可以形成语法结构，却无法完成名字绑定；
+\texttt{int x = ;} 则在构造完整表达式时就失败。三个反例说明类型和名字检查
+需要符号与上下文信息，而不能仅依赖 token 序列。
+
+\subsubsection{中间代码与控制流}
+
+Clang 自动生成的阶乘 LLVM IR 共 111 行。未优化的局部变量对应
+\texttt{alloca}，读写对应 \texttt{load/store}；有符号循环条件对应
+\texttt{icmp sle} 和条件 \texttt{br}，循环体包含 \texttt{mul nsw} 和加一操作。
+\texttt{cin/cout} 变为 C++ 流对象及带符号修饰的函数调用，
+因此同样的阶乘运算之外还包含运行库接口和静态初始化。
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[>=stealth,every node/.style={draw,rounded corners,align=center,font=\small,minimum height=11mm}]
+\node (entry) at (0,0) {入口 \texttt{\%0}\\输入 $n$；初始化 $i=2,f=1$};
+\node (cond) at (0,-1.8) {条件块 \texttt{\%6}\\\texttt{icmp sle}：$i\leq n$};
+\node (body) at (-2.9,-3.6) {循环体 \texttt{\%10}\\$f=f\times i$；$i=i+1$};
+\node (done) at (2.9,-3.6) {出口 \texttt{\%16}\\输出 $f$；返回 0};
+\draw[->] (entry)--(cond);
+\draw[->] (cond)--node[draw=none,fill=white,font=\small]{真}(body);
+\draw[->] (cond)--node[draw=none,fill=white,font=\small]{假}(done);
+\draw[->] (body.west)--++(-.6,0)|-(cond.west);
+\end{tikzpicture}
+\caption{自动生成 CFG 的四个基本块；省略库调用与变量访存细节}\label{fig:zlf-cfg}
+\end{figure}
+图\ref{fig:zlf-cfg}的入口块初始化 $i=2,f=1$，条件块判断 $i\leq n$，
+真分支进入循环体并返回条件块，假分支执行输出后返回。
+基本块的边界由控制流决定，不与源语言的花括号一一对应：一个 while 语句就需要
+条件、循环体和出口等多个基本块。
+
+\subsubsection{优化：用具体变换解释 pass 输出}
+本实验单独运行 mem2reg 和 instcombine，并比较每一步输出的函数体，定位具体优化变换。
+阶乘的默认 O0 IR 带 \texttt{optnone}，直接运行优化可能跳过该函数。
+因此对 calc(x) 中的 x+0、乘一和加三依次执行两个 pass，并显式关闭该属性。
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lrrrrr}
+\toprule 产物 & alloca & load & store & add & mul\\\midrule
+原始 IR & 3 & 3 & 3 & 2 & 1\\
+mem2reg 后 & 0 & 0 & 0 & 2 & 1\\
+再经 instcombine & 0 & 0 & 0 & 1 & 0\\
+\bottomrule
+\end{tabular}
+\caption{受控函数的实际指令数量变化}
+\end{table}
+
+mem2reg 将可提升的栈变量改为 SSA 值，消除了本例的内存访问；
+instcombine 消除加零与乘一，将函数简化为 $x+3$。对照函数体可以直接看到访存和冗余算术指令的消除。
+
+\subsubsection{代码生成：x86 与 RISC-V 的对应关系}
+
+分别使用原生 G++ 和课程交叉工具链的 \texttt{-S} 获得目标汇编。
+观察阶乘循环中的乘法和加一操作。
+
+两段完成相同的变量更新。x86 的 \texttt{imull} 可以带内存源操作数；
+RISC-V 的计算采用寄存器操作数，\texttt{lw/sw} 负责访存。
+RV64 的 \texttt{mulw/addiw} 保留 int 的 32 位运算宽度，再符号扩展到 64 位。
+生成代码还包含栈帧、寄存器保存和 C++ 库函数调用。指令数量不同不能单独推出性能优劣，
+还取决于优化级别、处理器实现和运行库成本。
+
+\experimentshot{08-codegen}{x86 与 RV64 的循环指令比较}
+
+\subsubsection{汇编器：机器码、符号表和重定位}
+先生成汇编，再将 .s 输入交给汇编器，单独观察目标文件生成过程。
+
+反汇编显示每条指令对应的机器码字节；符号表中 main 为已定义代码符号，
+标准流对象及成员函数仍是未定义外部符号。流对象 cin 的引用使用
+\texttt{R\_X86\_64\_REX\_GOTPCRELX}，流提取函数调用使用 \texttt{R\_X86\_64\_PLT32}。
+
+汇编器能确定当前目标文件内的指令编码和局部布局，但外部函数的最终地址尚不可知。
+它记录符号、重定位类型、偏移与附加值，交给链接阶段处理。
+因此 .o 是可重定位文件，不是仅将汇编文本换成二进制的可执行程序。
+
+\experimentshot{09-assembly}{目标文件机器码、符号表与重定位}
+
+\subsubsection{链接器：同平台静态与动态链接对照}
+对同一 x86 程序使用 O0 级别，比较动态、静态和带调试信息的构建。
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lrl}
+\toprule 产物 & 文件字节数 & 输入 5 的输出\\\midrule
+动态链接 & 16624 & 120\\
+静态链接 & 2403984 & 120\\
+带调试信息 & 33504 & 120\\
+\bottomrule
+\end{tabular}
+\caption{同平台构建的实测文件大小}
+\end{table}
+动态版的 ldd 显示 libstdc++、libc、libm 和 libgcc\_s 等依赖，静态版提示
+``not a dynamic executable''。链接器安排输入节的布局、处理重定位并解析符号；
+静态链接会从归档库提取需要的目标成员，动态链接通常保留 PLT／GOT 和动态符号信息，
+由动态加载器参与运行时解析。输入 5 时，三种构建均输出 120。
+
+\subsubsection{进一步探索：调试信息与优化级别}
+加入 \texttt{-g} 后，\texttt{readelf -S} 可见 .debug\_info、.debug\_line 等节；
+\texttt{objdump -d -S} 能在反汇编中插入源码。
+带调试信息的文件变大，但该变化主要来自调试元数据，不代表执行指令同比增多。
+
+分别使用 O0、O1、O2 和 Os 编译，统计文本行数，结果如下：
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lrrrr}
+\toprule fact 产物 & O0 & O1 & O2 & Os\\\midrule
+LLVM IR 行数 & 111 & 163 & 250 & 152\\
+RISC-V 汇编行数 & 66 & 49 & 88 & 45\\
+\bottomrule
+\end{tabular}
+\caption{阶乘程序不同优化级别的文本规模}
+\end{table}
+文本规模同时受到注释、属性和代码变换影响，因此结合具体指令变化分析优化行为。
+
+\subsubsection{自动并行化与运行验证}
+\texttt{par.c} 对 40000 个元素初始化并求和，串行版与自动并行版均输出
+799980000；并行版汇编包含一次 \texttt{GOMP\_parallel} 调用，支持编译器引入
+GNU OpenMP 并行执行的判断。并行构建使用 \texttt{-ftree-parallelize-loops=4 -pthread}。
+
+\experimentshot{12-parallel}{串行与自动并行化的运行结果}
+
+阶乘与数组初始化不同，循环中的 $f$ 依赖前一次迭代结果，即 $f_i=f_{i-1}\times i$，
+不能简单把每次迭代分给独立线程执行。其输入输出位于循环外，跨迭代数据依赖才是
+分析循环变换时需要考虑的因素。
+
+将输入 5 送入不同构建方式得到的可执行程序，均输出 120，说明本组构建保持了
+阶乘计算结果。运行验证与前面的代码结构分析相互补充。

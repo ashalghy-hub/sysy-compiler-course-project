@@ -1,0 +1,36 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8">
+<style>*{box-sizing:border-box}body{margin:0;background:#fff;color:#152238;font-family:"Microsoft YaHei",sans-serif}
+#capture{padding:24px;width:100%;max-width:1180px}h1{font-size:25px;margin:0 0 18px}.panels{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+section{border:1px solid #b7c7d9;border-radius:5px;overflow:hidden}h2{margin:0;padding:12px 15px;background:#edf3f8;font-size:18px;font-weight:600}
+pre{margin:0;padding:16px;font:17px/1.5 Consolas,"Courier New",monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:#fff}
+.note{font-size:14px;color:#586b7f;margin-top:14px}</style><div id="capture"><h1>mem2reg：局部访存转换为 SSA 合流</h1><div class="panels"><section><h2>promote_demo.ll（优化前）</h2><pre>  7    %index = alloca i32, align 4
+  8    %sum = alloca i32, align 4
+  9    %n = call i32 @getint()
+ 10    store i32 0, ptr %index, align 4
+ 11    store i32 0, ptr %sum, align 4
+ 12    br label %header
+ 13  header:
+ 14    %i = load i32, ptr %index, align 4
+ 15    %more = icmp slt i32 %i, %n
+ 16    br i1 %more, label %body, label %done
+ 17  body:
+ 18    %old = load i32, ptr %sum, align 4
+ 19    %added = add i32 %old, %i
+ 20    store i32 %added, ptr %sum, align 4
+ 21    %next = add i32 %i, 1
+ 22    store i32 %next, ptr %index, align 4
+ 23    br label %header</pre></section><section><h2>promote_demo_mem2reg.ll（优化后）</h2><pre>  7
+  8  declare void @putch(i32)
+  9
+ 10  define i32 @main() {
+ 11  entry:
+ 12    %n = call i32 @getint()
+ 13    br label %header
+ 14
+ 15  header:                                           ; preds = %body, %entry
+ 16    %sum.0 = phi i32 [ 0, %entry ], [ %added, %body ]
+ 17    %index.0 = phi i32 [ 0, %entry ], [ %next, %body ]
+ 18    %more = icmp slt i32 %index.0, %n
+ 19    br i1 %more, label %body, label %done
+ 20  </pre></section></div>
+<div class="note">项目文件与已保存运行记录的只读视图</div></div></html>

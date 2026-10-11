@@ -82,23 +82,94 @@ mlir-translate --mlir-to-llvmir 03_llvm.mlir -o 04_llvm.ll
 
 首先 generic 被展开为 \texttt{scf.for}，循环体出现两个 memref.load、一次
 arith.addi 和一次 memref.store。接着循环被拆成比较、条件分支、循环体和回边，
-迭代变量通过块参数传递；结构化循环这个概念不再显式保留。
+迭代变量通过块参数传递；结构化循环这个概念不再显式保留。两层输出的对照见图\ref{fig:mlir-lowering}。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figures/mlir_lowering.jpg}
+\caption{VecAdd 从 SCF 结构化循环降低为 CF 基本块分支的文件截图}
+\label{fig:mlir-lowering}
+\end{figure}
+
 再向 LLVM 方言转换时，MemRef 描述符中的已分配地址、对齐地址、偏移、长度和步长
 被显式展开，生成与 C 调用者衔接的包装函数。
 最后 \texttt{mlir-translate} 才输出真正的 LLVM IR。
 因此 \texttt{llvm.*} 操作所在的 MLIR 文件，与 LLVM 自身的 \texttt{.ll} 文件
 并不是同一种文本格式。
 
+\subsection{逐层操作的对应与语义保持}
+在三个恒等索引映射下，同一个迭代变量 i 同时定位 a、b、c 的第 i 个元素。
+降低为 SCF 后，循环范围为 $[0,16)$、步长为 1；转为 CF 后，循环头的块参数承接初值 0
+和回边上的 $i+1$，比较结果决定进入计算块或返回块。
+最终 LLVM IR 的循环头使用 phi i64 表达这一合流，而加法数据仍为 i16。
+\begin{table}[htbp]
+\centering\small
+\begin{tabular}{p{0.21\linewidth}p{0.28\linewidth}p{0.37\linewidth}}
+\toprule
+计算要素 & 中间层表示 & LLVM 层表示\\
+\midrule
+逐元素索引 & Linalg 恒等索引映射 & 以迭代变量计算元素地址\\
+循环迭代 & scf.for；CF 块参数 & phi i64、icmp、br\\
+读取输入 & memref.load & getelementptr i16、load i16\\
+加法与写回 & arith.addi、memref.store & add i16、store i16\\
+函数出口 & func.return & ret void\\
+\bottomrule
+\end{tabular}
+\caption{本次 VecAdd 各层的操作对应关系}
+\end{table}
+循环边界、迭代步长和元素运算在各层保持一致；变化主要在于控制流与地址的表达方式。
+最终文件中三个 getelementptr 的元素类型均为 i16，连续索引相差 2 字节。
+每次迭代读取两个输入、相加并写入一个输出位置，对应原始 generic 的一个迭代实例。
+
+\subsection{MemRef 描述符与 C 调用接口}
+高层的 \texttt{memref<16xi16>} 同时携带元素类型、维数和长度信息。
+LLVM 层的一维描述符展开为两个指针、一个偏移、一个长度和一个步长。
+C 驱动使用与实际生成接口匹配的结构：
+\par\vspace{0.7\baselineskip}\noindent\begin{minipage}[t]{\linewidth}
+\lstinputlisting[language=C,firstline=5,lastline=9]{../prep/mlir/driver.c}
+\end{minipage}\par\vspace{0.5\baselineskip}
+\begin{table}[htbp]
+\centering\small
+\begin{tabular}{lll}
+\toprule
+描述符字段 & 本实验设置 & 含义\\
+\midrule
+allocated、aligned & 均为对应数组首地址 & 分配地址与对齐后的数据地址\\
+offset & 0 & 第一个逻辑元素的偏移\\
+sizes[0] & 16 & 一维数组长度\\
+strides[0] & 1 & 相邻逻辑元素的元素步长\\
+\bottomrule
+\end{tabular}
+\caption{CPU VecAdd 的一维 MemRef 描述符}
+\end{table}
+生成的 \texttt{\_mlir\_ciface\_vecadd} 接收三个描述符地址，
+读取各字段后调用内部 vecadd。内部函数将每个描述符展开为五个参数，共 15 个参数。
+本例为静态长度、零偏移、单位步长，降低后的实际循环直接从 aligned 地址按 i16 元素索引访存。
+因此，源层的数组接口与底层指针接口之间由生成的包装函数衔接。
+
+在 \texttt{03\_llvm.mlir} 中，构造与读取描述符使用 llvm.insertvalue、llvm.extractvalue，
+循环和访存使用 llvm.br、llvm.getelementptr、llvm.load/store。
+翻译后的 \texttt{04\_llvm.ll} 则采用 LLVM 原生指令语法，循环索引合流已表现为 phi。
+从 12 行到 67 行的展开既包含计算循环，也包含描述符组装和 C 接口包装。
+
 \subsection{末端验证与分析}
 C 驱动构造与一维 MemRef 对应的描述符，通过
 \texttt{\_mlir\_ciface\_vecadd} 调用降低后的程序。
-本次 LLVM verifier 检查通过，Clang 编译链接后实际输出：
-\par\vspace{0.7\baselineskip}\noindent\begin{minipage}[t]{\linewidth}
-\begin{lstlisting}
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
-\end{lstlisting}
-\end{minipage}\par\vspace{0.5\baselineskip}
+本次 LLVM verifier 检查通过，Clang 编译链接后输出 1 至 16，实际记录见图\ref{fig:execution-results}。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figures/results.jpg}
+\caption{LLVM IR / RISC-V 的验证摘要与 MLIR VecAdd 实际运行记录截图}
+\label{fig:execution-results}
+\end{figure}
+
 驱动逐个断言全部 16 个元素正确，退出码 0。
+
+验证驱动将输出数组初始化为零，再设置 $a[i]=i$、$b[i]=1$。
+对每个位置比较 $c[i]$ 与 $i+1$，发现不匹配即输出错误位置并返回 1。
+本次所有元素通过检查后完整输出 1 至 16，并返回 0，
+将“各层文件生成成功”与“末端计算正确”连接起来。
 版本、命令、stderr 和结果保存于 \path{prep/mlir/results/}。
 行数从 12 增至 67，主要来自内存描述符与调用接口的展开。
 

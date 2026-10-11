@@ -1,0 +1,26 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8">
+<style>*{box-sizing:border-box}body{margin:0;background:#fff;color:#152238;font-family:"Microsoft YaHei",sans-serif}
+#capture{padding:24px;width:100%;max-width:1180px}h1{font-size:25px;margin:0 0 18px}.panels{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+section{border:1px solid #b7c7d9;border-radius:5px;overflow:hidden}h2{margin:0;padding:12px 15px;background:#edf3f8;font-size:18px;font-weight:600}
+pre{margin:0;padding:16px;font:17px/1.5 Consolas,"Courier New",monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:#fff}
+.note{font-size:14px;color:#586b7f;margin-top:14px}</style><div id="capture"><h1>验证记录：LLVM IR / RISC-V 与 MLIR VecAdd</h1><div class="panels"><section><h2>llvm_ir/results/latest.json（摘要）</h2><pre>summary
+{
+  &quot;passed&quot;: 269,
+  &quot;total&quot;: 269
+}
+
+mem2reg
+{&quot;before&quot;: {&quot;alloca&quot;: 2, &quot;load&quot;: 3, &quot;store&quot;: 4, &quot;phi&quot;: 0}, &quot;after&quot;: {&quot;alloca&quot;: 0, &quot;load&quot;: 0, &quot;store&quot;: 0, &quot;phi&quot;: 2}}</pre></section><section><h2>mlir/results/commands.json（运行项）</h2><pre>{
+  &quot;command&quot;: [
+    &quot;build/prep-mlir/vecadd&quot;
+  ],
+  &quot;returncode&quot;: 0,
+  &quot;stdout&quot;: &quot;1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16\n&quot;,
+  &quot;stderr&quot;: &quot;&quot;
+}
+
+{
+  &quot;passed&quot;: true,
+  &quot;elements_checked&quot;: 16
+}</pre></section></div>
+<div class="note">项目文件与已保存运行记录的只读视图</div></div></html>
