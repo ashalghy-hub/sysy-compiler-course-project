@@ -43,6 +43,7 @@ HFusion 到 HIVM 的转换。}本报告的层级关系来自官方架构说明�
 \texttt{memref<16xi16>} 参数。Linalg 的三个恒等索引映射表示
 $c[i]=a[i]+b[i]$，迭代属性 parallel 表明各元素计算互相独立。
 这保留了后续选择循环或向量化策略的空间，但本次选择的是标量循环路线。
+\par\vspace{0.7\baselineskip}\noindent\begin{minipage}[t]{\linewidth}
 \begin{lstlisting}
 linalg.generic {
   indexing_maps = [affine_map<(i)->(i)>,
@@ -55,12 +56,14 @@ linalg.generic {
   linalg.yield %sum : i16
 }
 \end{lstlisting}
+\end{minipage}\par\vspace{0.5\baselineskip}
 这是本次手写的上游例子，不是复制或执行 Ascend 专有程序。
 输入数组设为 $a[i]=i$、$b[i]=1$（$0\leq i<16$），C 驱动逐项检查输出。
 
 \subsection{逐层 lowering 与检查点}
 上游 MLIR 文档介绍结构化 SCF 与非结构化 CF 的区分\cite{scfref}。
 本次根据工具可用 pass\cite{mlirpasses}执行如下管线，每一步均保存文件：
+\par\vspace{0.7\baselineskip}\noindent\begin{minipage}[t]{\linewidth}
 \begin{lstlisting}[language=bash]
 mlir-opt vecadd.mlir -o 00_linalg.mlir
 mlir-opt 00_linalg.mlir --convert-linalg-to-loops -o 01_scf.mlir
@@ -69,6 +72,7 @@ mlir-opt 02_cf.mlir --convert-to-llvm \
     --reconcile-unrealized-casts -o 03_llvm.mlir
 mlir-translate --mlir-to-llvmir 03_llvm.mlir -o 04_llvm.ll
 \end{lstlisting}
+\end{minipage}\par\vspace{0.5\baselineskip}
 完整脚本 \texttt{prep/mlir/run\_lowering.py} 支持系统工具或项目内便携工具。
 上述路径在脚本中落实为 results 下的检查点，不依赖工作目录的绝对用户名。
 
@@ -100,9 +104,11 @@ arith.addi 和一次 memref.store。接着循环被拆成比较、条件分支�
 C 驱动构造与一维 MemRef 对应的描述符，通过
 \texttt{\_mlir\_ciface\_vecadd} 调用降低后的程序。
 本次 LLVM verifier 检查通过，Clang 编译链接后实际输出：
+\par\vspace{0.7\baselineskip}\noindent\begin{minipage}[t]{\linewidth}
 \begin{lstlisting}
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
 \end{lstlisting}
+\end{minipage}\par\vspace{0.5\baselineskip}
 驱动逐个断言全部 16 个元素正确，退出码 0。
 版本、命令、stderr 和结果保存于 \path{prep/mlir/results/}。
 行数从 12 增至 67，主要由内存描述符和接口展开造成；该数字不能直接说明运行速度。

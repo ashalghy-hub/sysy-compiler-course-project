@@ -31,7 +31,8 @@ lw 读取数组元素，并保持 32 位结果的符号扩展。寻址和 sp 调
 
 \subsection{短路、循环与递归的目标代码表达}
 短路例子先检查 n，再进入右侧表达式。以下为受保护除法的完整控制片段：
-\begin{samepage}
+
+\par\vspace{0.7\baselineskip}\noindent\begin{minipage}[t]{\linewidth}
 \begin{lstlisting}
     li a0,0
     beqz s0,.Land_done
@@ -42,7 +43,8 @@ lw 读取数组元素，并保持 32 位结果的符号扩展。寻址和 sp 调
 .Land_done:
     call putint
 \end{lstlisting}
-\end{samepage}
+\end{minipage}\par\vspace{0.5\baselineskip}
+
 其中 s0 保存 n。n=0 时直接跳过 divw；另一个逻辑或条件在 n=0 时直接进入真分支，
 不会调用 touch。全局 hits 通过 la/lw/sw 访问，输出次数与 LLVM IR 版本一致。
 循环例子用寄存器保存 i 与 sum，continue 跳回条件检查，break 跳到输出出口。
@@ -50,7 +52,8 @@ LLVM IR 中 phi 的作用在此由不同路径对同一状态寄存器的更新�
 不需要在汇编中引入名为 phi 的指令。
 
 递归 factorial 的非基本情形保存原参数和 ra，再调用自身：
-\begin{samepage}
+
+\par\vspace{0.7\baselineskip}\noindent\begin{minipage}[t]{\linewidth}
 \begin{lstlisting}
     addi sp,sp,-16
     sd ra,8(sp)
@@ -64,7 +67,8 @@ LLVM IR 中 phi 的作用在此由不同路径对同一状态寄存器的更新�
     addi sp,sp,16
     ret
 \end{lstlisting}
-\end{samepage}
+\end{minipage}\par\vspace{0.5\baselineskip}
+
 基本情形 n<=1 直接返回 1，不建立额外栈帧。
 emit 不返回计算值，但它调用输出库，也必须保存 ra；源程序的 void 返回
 对应恢复调用现场后 ret。测试 n=0、1、5、7、12，既检查递归出口也检查多层返回。
@@ -85,6 +89,7 @@ scaled 在后续 row\_sum、putint、putch 调用期间保存在栈上，
 
 \subsection{汇编、链接和同输入等价性验证}
 验证脚本对每个手写文件执行静态链接并由 QEMU 运行，例如：
+\par\vspace{0.7\baselineskip}\noindent\begin{minipage}[t]{\linewidth}
 \begin{lstlisting}[language=bash]
 riscv64-linux-gnu-gcc -static -march=rv64gc -mabi=lp64d \
   prep/llvm_ir/handwritten/functions_rv.s prep/manual/sylib.c \
@@ -92,6 +97,7 @@ riscv64-linux-gnu-gcc -static -march=rv64gc -mabi=lp64d \
 printf '7\n' | qemu-riscv64 build/prep-llvm-ir/functions_handwritten_rv
 # stdout: 5040, process exit status: 0
 \end{lstlisting}
+\end{minipage}\par\vspace{0.5\baselineskip}
 gcc 在这里调用汇编器和链接器处理手写 .s，库源码另行编译；
 源程序和 LLVM IR 的参考编译路径与此独立。链接失败、模拟执行超时、非零退出码
 或任一输出差异都会使验证脚本失败。

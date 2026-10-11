@@ -23,6 +23,7 @@ getint、putint 和 putch。该实现足以支撑当前例子，但尚未取得�
 \texttt{.sy} 文件不包含 C 头文件；参考编译通过命令行强制包含库声明，
 且所选示例均避开 SysY 与 C 语义不同的语法。
 
+\par\vspace{0.7\baselineskip}\noindent\begin{minipage}[t]{\linewidth}
 \begin{lstlisting}[language=bash]
 python3 prep/llvm_ir/verify.py
 llvm-as sample.ll -o sample.bc
@@ -31,6 +32,7 @@ opt -S '-passes=default<O2>' sample.ll -o sample_O2.ll
 llc -mtriple=riscv64-linux-gnu -mattr=+m,+a,+f,+d,+c \
     -target-abi=lp64d sample.ll -o sample_generated_rv.s
 \end{lstlisting}
+\end{minipage}\par\vspace{0.5\baselineskip}
 上面的 sample 命令说明单组操作，实际完整命令由验证脚本记录。
 脚本每次重新构建程序，检查编译退出码，对运行设置超时，逐项比较标准输出
 及退出码；不依赖已有可执行文件。二进制写入 build，命令与诊断写入
@@ -66,6 +68,7 @@ $n-\operatorname{trunc}(n/3)\times3$；不能直接用 Python 向下取整除法
 以 n=0 为例，正确程序既不除以零，也不调用 touch，最终 hits=0；
 非零输入则调用 touch 一次。这比只比较纯表达式的真假更能检验执行顺序。
 
+\par\vspace{0.7\baselineskip}\noindent\begin{minipage}[t]{\linewidth}
 \begin{lstlisting}
 %nonzero = icmp ne i32 %n, 0
 br i1 %nonzero, label %and.rhs, label %and.false
@@ -76,6 +79,7 @@ and.rhs:
 and.join:
   %and.value = phi i32 [1, %and.true], [0, %and.false]
 \end{lstlisting}
+\end{minipage}\par\vspace{0.5\baselineskip}
 代码为关键片段，省略的基本块和声明见同名完整源文件。右操作数置于独立块中，
 而不是先执行两边再用 and/or 合并；后者会错误执行除法或副作用。
 测试 n=-3、0、1、4、5、12，覆盖受保护分母、条件真/假和副作用次数。
@@ -86,6 +90,7 @@ continue 的边直接回到循环头，break 的边直接进入出口。
 循环头分别对 i 和 sum 建立 phi，continue 边保持 sum，普通边传入累加后的值。
 出口的 phi 对正常条件退出和 break 退出分别提供值。
 
+\par\vspace{0.7\baselineskip}\noindent\begin{minipage}[t]{\linewidth}
 \begin{lstlisting}
 header:
   %i = phi i32 [0, %entry], [%next, %skip], [%next, %accumulate]
@@ -95,6 +100,7 @@ header:
 done:
   %result = phi i32 [%sum, %header], [%sum, %break.test]
 \end{lstlisting}
+\end{minipage}\par\vspace{0.5\baselineskip}
 LLVM verifier 能发现类型、前驱和支配关系等结构错误，但结构合法不能证明语义正确；
 还需运行比较。输入 n=2 时只累加 1，n=5 或 n=8 时结果均为 13，
 分别触发 continue 与 break。函数例子进一步使用递归阶乘和 void 输出函数，

@@ -4,6 +4,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "LaTeX模板"
 BIB = r"""
+\newpage
 \begin{thebibliography}{9}
 \bibitem{riscvabi} RISC-V International. RISC-V ABIs Specification. \url{https://riscv-non-isa.github.io/riscv-elf-psabi-doc/}.
 \bibitem{llvmref} LLVM Project. LLVM Language Reference Manual. \url{https://llvm.org/docs/LangRef.html}.
@@ -27,6 +28,7 @@ def build():
 \title{编译系统上机大作业预备工作\\LLVM IR 与 RISC-V 编程及 MLIR 进阶探索}
 \author{袁煜杰}
 \date{2026年10月11日}
+\raggedbottom
 \setlength{\emergencystretch}{2em}
 \begin{document}
 \maketitle
@@ -40,7 +42,7 @@ Linalg、SCF、CF、LLVM 方言降低以及 LLVM IR 翻译，VecAdd 的 16 个�
 本文重点覆盖基本要求二与进阶要求，基本要求一的编译流程调研不在本文展开。
 \end{abstract}
 \noindent\textbf{关键词：}SysY；LLVM IR；RISC-V；SSA；MLIR；等价性验证
-\tableofcontents\newpage
+\newpage\tableofcontents\newpage
 \section{引言与实验任务}
 课程要求设计涵盖数值运算、赋值、分支、循环、函数和其他进阶特性的 SysY 示例，
 编写等价的 LLVM IR 以及 ARM 或 RISC-V 汇编，链接运行库并验证实际输出。
