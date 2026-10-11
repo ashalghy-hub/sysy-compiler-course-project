@@ -1,7 +1,7 @@
 \subsection{实验方法}
 设计六组 SysY 程序，分别编写 LLVM IR 与 RISC-V 汇编。
 整数和浮点数分别用 i32、float 表示；局部寄存器遵循 SSA，控制流合流使用 phi，
-内存变量通过 load/store 访问\cite{llvmref}。
+内存变量通过 load/store 访问。
 
 \subsection{类型、值与源语言语义的对应}
 手写 IR 将源语言中的变量、条件和地址分别表示为有类型的值。
@@ -74,14 +74,11 @@ $n-\operatorname{trunc}(n/3)\times3$。
 非零输入则调用 touch 一次。
 
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\linewidth]{figures/short_circuit.jpg}
-\caption{短路示例源码与手写 LLVM IR 的条件分支、phi 合流截图}
-\label{fig:short-ir}
-\end{figure}
+\reportEvidence{short_circuit}{短路 IR 验证与输入 0、4 的实际终端运行结果}{fig:short-ir}{%
+\lstinputlisting[firstline=14,lastline=28,basicstyle=\footnotesize\ttfamily]{../prep/llvm_ir/short_circuit.ll}}
 
 图\ref{fig:short-ir}中，右操作数置于独立基本块中，由分支决定是否执行。
+终端中输入 0 和 4 分别输出 0、2、0 与 1、2、1，验证了受保护除法及 touch 的调用次数。
 测试 n=-3、0、1、4、5、12，覆盖受保护分母、条件真/假和副作用次数。
 
 \subsection{循环合流与 SSA 值传递}
@@ -178,11 +175,14 @@ $s=i(i-1)/2$。正输入 n 的结果为 $n(n-1)/2$，非正输入直接输出 0�
 实测 n=-3、0、1、5、10 的输出分别为 0、0、0、10、45。
 这一对照同时检查了局部存储消除、循环回边与计算结果的保持。
 
-优化前后的实际文件截图见图\ref{fig:mem2reg}。
+优化前后的指令对照见图\ref{fig:mem2reg}。
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\linewidth]{figures/mem2reg.jpg}
-\caption{mem2reg 优化前的局部访存与优化后的 phi 节点截图}
-\label{fig:mem2reg}
-\end{figure}
+\reportEvidence{mem2reg}{mem2reg 指令对照与输入 10 输出 45 的终端截图}{fig:mem2reg}{%
+\begin{minipage}[t]{0.48\linewidth}
+\textbf{优化前}
+\lstinputlisting[firstline=7,lastline=16,basicstyle=\scriptsize\ttfamily]{../prep/llvm_ir/promote_demo.ll}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+\textbf{优化后}
+\lstinputlisting[firstline=15,lastline=24,basicstyle=\scriptsize\ttfamily]{../prep/llvm_ir/results/promote_demo_mem2reg.ll}
+\end{minipage}}

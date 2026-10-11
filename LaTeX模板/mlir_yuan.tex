@@ -3,13 +3,13 @@
 并使用 MLIR 21.1.8 构造上游 VecAdd，执行逐层降低和 CPU 运行验证。
 
 \subsection{AscendNPU IR VecAdd 的方言与层级}
-官方快速入门\cite{ascendexample}的 VecAdd 使用 i16 元素，并区分 GM 与 UB
+官方快速入门的 VecAdd 使用 i16 元素，并区分 GM 与 UB
 地址空间。输入先搬入片上缓冲，再进行向量加法，最后搬回输出；设备入口用
 HACC 属性表达。编译后还需要 CANN runtime 注册和启动设备程序。
 
 
-架构说明\cite{ascendarchitecture}把 HFusion、HIVM、HACC 分为高层融合、
-硬件相关计算/搬运/同步、异构执行表达等职责。结合 HIVM 文档\cite{hivmref}，
+架构说明把 HFusion、HIVM、HACC 分为高层融合、
+硬件相关计算/搬运/同步、异构执行表达等职责。结合 HIVM 文档，
 可以看到片上内存和计算流水信息在特定层被显式保留。
 官方快速入门从 HIVM 级程序开始，体现片上缓冲、向量计算和数据搬运的配合。
 
@@ -51,8 +51,8 @@ linalg.generic {
 输入数组设为 $a[i]=i$、$b[i]=1$（$0\leq i<16$），C 驱动逐项检查输出。
 
 \subsection{逐层 lowering 与检查点}
-上游 MLIR 文档介绍结构化 SCF 与非结构化 CF 的区分\cite{scfref}。
-本次根据工具可用 pass\cite{mlirpasses}执行如下管线，每一步均保存文件：
+上游 MLIR 文档介绍结构化 SCF 与非结构化 CF 的区分。
+本次根据工具可用 pass执行如下管线，每一步均保存文件：
 \par\vspace{0.7\baselineskip}\noindent\begin{minipage}[t]{\linewidth}
 \begin{lstlisting}[language=bash]
 mlir-opt vecadd.mlir -o 00_linalg.mlir
@@ -85,12 +85,15 @@ mlir-translate --mlir-to-llvmir 03_llvm.mlir -o 04_llvm.ll
 arith.addi 和一次 memref.store。接着循环被拆成比较、条件分支、循环体和回边，
 迭代变量通过块参数传递；结构化循环这个概念不再显式保留。两层输出的对照见图\ref{fig:mlir-lowering}。
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\linewidth]{figures/mlir_lowering.jpg}
-\caption{VecAdd 从 SCF 结构化循环降低为 CF 基本块分支的文件截图}
-\label{fig:mlir-lowering}
-\end{figure}
+\reportEvidence{mlir_lowering}{终端中 SCF 与 CF 实际输出文件的对照}{fig:mlir-lowering}{%
+\begin{minipage}[t]{0.48\linewidth}
+\textbf{SCF}
+\lstinputlisting[firstline=6,lastline=11,basicstyle=\scriptsize\ttfamily]{../prep/mlir/results/01_scf.mlir}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+\textbf{CF}
+\lstinputlisting[firstline=6,lastline=16,basicstyle=\scriptsize\ttfamily]{../prep/mlir/results/02_cf.mlir}
+\end{minipage}}
 
 再向 LLVM 方言转换时，MemRef 描述符中的已分配地址、对齐地址、偏移、长度和步长
 被显式展开，生成与 C 调用者衔接的包装函数。
@@ -160,14 +163,11 @@ strides[0] & 1 & 相邻逻辑元素的元素步长\\
 \subsection{末端验证与分析}
 C 驱动构造与一维 MemRef 对应的描述符，通过
 \texttt{\_mlir\_ciface\_vecadd} 调用降低后的程序。
-本次 LLVM verifier 检查通过，Clang 编译链接后输出 1 至 16，实际记录见图\ref{fig:execution-results}。
+本次 LLVM verifier 检查通过，Clang 编译链接后输出 1 至 16。
+图\ref{fig:execution-results}记录 LLVM/RISC-V 的 269 项检查和 VecAdd 的 16 项检查均通过。
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\linewidth]{figures/results.jpg}
-\caption{LLVM IR / RISC-V 的验证摘要与 MLIR VecAdd 实际运行记录截图}
-\label{fig:execution-results}
-\end{figure}
+\reportEvidence{results}{LLVM/RISC-V 269/269 与 MLIR VecAdd 16/16 的实际验证截图}{fig:execution-results}{%
+\lstinputlisting[language=C,firstline=14,lastline=18,basicstyle=\footnotesize\ttfamily]{../prep/mlir/driver.c}}
 
 驱动逐个断言全部 16 个元素正确，退出码 0。
 

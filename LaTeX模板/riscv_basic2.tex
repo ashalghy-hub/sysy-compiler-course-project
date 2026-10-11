@@ -1,7 +1,7 @@
 \subsection{手写 RISC-V 汇编的组织与调用约定}
 六组示例采用 RV64GC 指令集和 LP64D 调用约定。
 整数参数和返回值使用 a0 等参数寄存器，浮点函数的单精度参数和返回值使用 fa0。
-遵循 RISC-V psABI\cite{riscvabi}，函数调用处保持 sp 的 16 字节对齐，
+遵循 RISC-V psABI，函数调用处保持 sp 的 16 字节对齐，
 使用 s 寄存器的函数保存并恢复相应值；非叶函数保存返回地址 ra。
 跨调用保留的数据存入 s 寄存器或栈中。
 
@@ -68,15 +68,12 @@ LLVM IR 中的 phi 对应不同路径对状态寄存器的更新。
 \end{tabular}
 \end{table}
 
-递归 factorial 的非基本情形保存原参数和 ra，再调用自身，汇编与对应运行记录见图\ref{fig:recursive-rv}：
+递归 factorial 的非基本情形保存原参数和 ra，再调用自身。
+图\ref{fig:recursive-rv}展示完整函数、交叉编译命令及 QEMU 输入 7 输出 5040 的运行结果。
 
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\linewidth]{figures/recursive_rv.jpg}
-\caption{递归阶乘的手写 RISC-V 汇编与输入 7 的测试记录截图}
-\label{fig:recursive-rv}
-\end{figure}
+\reportEvidence{recursive_rv}{递归阶乘的手写汇编、交叉编译与 QEMU 运行截图}{fig:recursive-rv}{%
+\lstinputlisting[firstline=5,lastline=21,basicstyle=\footnotesize\ttfamily]{../prep/llvm_ir/handwritten/functions_rv.s}}
 
 
 基本情形 n<=1 直接返回 1，不建立额外栈帧。

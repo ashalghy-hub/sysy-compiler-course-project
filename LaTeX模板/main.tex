@@ -11,6 +11,15 @@
 \newcommand{\sihao}{\fontsize{14pt}{21pt}\selectfont}
 \ctexset{section={name={,、},number=\chinese{section}},subsection={name={（,）},number=\chinese{subsection}},subsubsection={name={,.},number=\arabic{subsubsection}}}
 \lstset{basicstyle=\small\ttfamily,breaklines=true,frame=single,columns=fullflexible,keepspaces=true}
+% Prefer genuine terminal/editor captures; otherwise show actual source excerpts.
+\newcommand{\reportEvidence}[4]{%
+  \begin{figure}[H]\centering
+  \IfFileExists{figures/real/#1.png}{%
+    \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{figures/real/#1.png}%
+  }{#4}%
+  \caption{#2}\label{#3}
+  \end{figure}%
+}
 \setcounter{tocdepth}{2}
 \setlength{\emergencystretch}{2em}
 \raggedbottom
@@ -157,17 +166,5 @@ MLIR 的逐层降低则表明，高层保留的索引映射与并行语义，
 此外，两部分分别在 Ubuntu 22.04（LLVM 14、QEMU 7.0.0）与
 Ubuntu 26.04（LLVM 21、QEMU 10.2.1）上完成，工具链版本并不一致，
 同一份手写 IR 在两端并不通用，后续实验宜先固定版本再动手。
-
-\clearpage
-\begin{thebibliography}{9}
-\small\setlength{\itemsep}{0pt}
-\bibitem{riscvabi} RISC-V International. RISC-V ABIs Specification. \url{https://riscv-non-isa.github.io/riscv-elf-psabi-doc/}.
-\bibitem{llvmref} LLVM Project. LLVM Language Reference Manual. \url{https://llvm.org/docs/LangRef.html}.
-\bibitem{ascendexample} AscendNPU IR. 快速入门示例. \url{https://ascendnpu-ir.gitcode.com/zh_cn/sources/introduction/quick_start/examples_zh.html}.
-\bibitem{ascendarchitecture} AscendNPU IR. 架构介绍. \url{https://ascendnpu-ir.gitcode.com/zh_cn/sources/introduction/architecture_zh.html}.
-\bibitem{hivmref} AscendNPU IR. HIVM Dialect. \url{https://ascendnpu-ir.gitcode.com/zh_cn/sources/developer_guide/dialects/HIVMDialect.html}.
-\bibitem{scfref} MLIR Project. SCF Dialect. \url{https://mlir.llvm.org/docs/Dialects/SCFDialect/}.
-\bibitem{mlirpasses} MLIR Project. Passes. \url{https://mlir.llvm.org/docs/Passes/}.
-\end{thebibliography}
 
 \end{document}
