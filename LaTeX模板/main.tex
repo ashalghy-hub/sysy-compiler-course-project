@@ -9,6 +9,7 @@
 \newcommand{\sihao}{\fontsize{14pt}{21pt}\selectfont}
 \ctexset{section={name={,、},number=\chinese{section}},subsection={name={（,）},number=\chinese{subsection}}}
 \lstset{basicstyle=\small\ttfamily,breaklines=true,frame=single,columns=fullflexible,keepspaces=true}
+\setcounter{tocdepth}{2}
 \setlength{\emergencystretch}{2em}
 \raggedbottom
 \begin{document}
@@ -90,11 +91,12 @@ SysY 编译器（词法分析、语法分析、类型检查与中间代码生成
 RISC-V GCC 15.2.0，QEMU 10.2.1。MLIR 21.1.8 工具从 Ubuntu 官方源下载并在项目内解压。
 详细命令和版本保存在实验结果目录中。
 
-\section{基本要求一：编译系统工作流程研究}
+\section{基础要求}
+\subsection{了解编译器工作过程}
 
 以阶乘程序 \texttt{fact.cpp} 为例，通过命令行选项获取各阶段产物（表\ref{tab:cmd}）。
 
-\subsection{实验方案}
+\subsubsection{实验方案}
 
 \begin{lstlisting}[title={研究载体：阶乘程序 fact.cpp（PPT 示例）},language={C++}]
 #include <iostream>
@@ -133,12 +135,12 @@ int main()
   \label{tab:cmd}
 \end{table}
 
-\subsection{预处理器}
+\subsubsection{预处理器}
 源程序仅 17 行，经 \texttt{clang++ -E} 预处理后得到 30194 行的
 \texttt{fact.i}——C++ 标准库头文件 \texttt{<iostream>} 展开了数万行声明。
 
-\subsection{编译器}
-\subsubsection{编译前端：生成 LLVM IR}
+\subsubsection{编译器}
+\paragraph{编译前端：生成 LLVM IR}
 \texttt{clang++ -emit-llvm -S} 生成 111 行 LLVM IR（\texttt{fact.ll}），
 关键片段如下：
 
@@ -174,19 +176,19 @@ define dso_local noundef i32 @main() #4 {
 }
 \end{lstlisting}
 
-\subsubsection{编译后端：生成目标汇编}
+\paragraph{编译后端：生成目标汇编}
 分别用 \texttt{g++ -S}（x86\_64，AT\&T 风格）与
 \texttt{riscv64-linux-gnu-g++ -S}（RISC-V）生成汇编，对比两者风格。
 
-\subsection{汇编器}
+\subsubsection{汇编器}
 \texttt{clang++ -c} 将汇编翻译为目标文件 \texttt{fact.o}，可用
 \texttt{objdump -d} 反汇编查看机器码，\texttt{objdump -r} 查看重定位项。
 
-\subsection{链接器}
+\subsubsection{链接器}
 链接阶段将目标文件与 C++ 运行库（\texttt{std::cin}/\texttt{std::cout}
 所在的 libstdc++）组装为可执行程序。
 
-\subsection{运行验证}
+\subsubsection{运行验证}
 四种方式运行同一程序，结果一致（输入 5，输出 120），说明各阶段产物等价：
 
 \begin{lstlisting}[title={运行验证},language=bash]
@@ -200,7 +202,7 @@ $ echo 5 | qemu-riscv64 ./fact_rv64   # RISC-V 可执行（QEMU 模拟）
 120
 \end{lstlisting}
 
-\subsection{进一步探索：优化选项的影响}
+\subsubsection{进一步探索：优化选项的影响}
 调整优化级别（\texttt{-O0/-O1/-O2/-Os}），观察 LLVM IR 与 RISC-V 汇编的
 变化，结果如表\ref{tab:opt}所示。
 
@@ -220,12 +222,24 @@ $ echo 5 | qemu-riscv64 ./fact_rv64   # RISC-V 可执行（QEMU 模拟）
   \label{tab:opt}
 \end{table}
 
-\section{基本要求二：LLVM IR 与 RISC-V 编程}
+\subsection{熟悉 LLVM IR 中间语言}
+\begingroup
+\let\subsection\subsubsection
 \input{llvm_ir_yuan.tex}
-\input{riscv_basic2.tex}
+\endgroup
 
-\section{进阶要求：MLIR 多级中间表示探索}
+\subsection{熟悉汇编语言}
+\begingroup
+\let\subsection\subsubsection
+\input{riscv_basic2.tex}
+\endgroup
+
+\section{进阶要求}
+\subsection{观察 AI 编译器 MLIR 中端处理过程}
+\begingroup
+\let\subsection\subsubsection
 \input{mlir_yuan.tex}
+\endgroup
 
 \section{总结与体会}
 编译阶段输出展示了源程序向 IR、汇编、目标文件和可执行程序的转换。
