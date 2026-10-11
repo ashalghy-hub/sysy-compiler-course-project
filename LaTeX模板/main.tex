@@ -11,7 +11,9 @@
 \ctexset{section={name={,、},number=\chinese{section}},subsection={name={（,）},number=\chinese{subsection}}}
 \lstset{basicstyle=\small\ttfamily,breaklines=true,frame=single,columns=fullflexible,keepspaces=true}
 \setlength{\emergencystretch}{2em}
+\raggedbottom
 \begin{document}
+\pagenumbering{Roman}
 \begin{titlepage}
     \begin{center}
     \includegraphics[width=0.8\textwidth]{NKU.png}\\[1cm]    
@@ -34,22 +36,22 @@
 \thispagestyle{empty}
 \renewcommand{\abstractname}{\kaishu \sihao \textbf{摘要}}
     \begin{abstract}
-        % 【待补全】摘要正文：概述本次预备工作的目的、内容、方法与结果。
-        % 要点提示：以 GCC/LLVM(Clang) 为研究对象，利用命令行选项获得预处理、编译、
-        % 汇编、链接各阶段的输出，分析其与源程序的关系；设计覆盖 SysY 语言特性的
-        % 示例程序，手写等价的 LLVM IR 与 RISC-V 汇编程序，链接 SysY 运行时库并
-        % 在 QEMU 模拟器上验证运行结果，为后续 SysY 编译器的实现奠定基础。
-        本报告记录两人的预备实验。袁煜杰完成六组手写 LLVM IR，与参考程序、本机和 RISC-V 执行结果比较，236 项检查全部通过；MLIR 进阶部分保存 Linalg 到 LLVM 的逐层输出，并验证 VecAdd 的 16 个元素。张龙飞已有编译流程与循环阶乘汇编实验，相关分析和更多手写汇编仍待其完善。本版本为共同报告整合稿。
+本报告研究预备工作中的编译工具流程、LLVM IR 与 RISC-V 汇编编程，以及 MLIR 中端的多级降低。
+基本要求二设计六组 SysY 示例并编写同源手写 LLVM IR 和 RISC-V 汇编，覆盖数值运算、
+作用域、短路、循环、函数、数组与浮点转换。通过结构检查、参考编译及本机/RV64 运行对照，
+33 组输入的八条执行路径及 mem2reg 对照共 269 项检查全部通过。
+进阶部分查阅 AscendNPU IR 官方 VecAdd、架构与方言文档，另实际执行上游 MLIR
+从 Linalg 经 SCF、CF、LLVM 方言到 LLVM IR 的降低，VecAdd 的 16 个元素均正确。
+本机未配置 NPU/CANN，专有路线只报告文档研究；当前使用最小教学运行库，正式课程库尚待复测。
+\end{abstract}
+\noindent\textbf{关键词：}SysY；LLVM IR；RISC-V；SSA；MLIR；等价性验证
 
-        \noindent  %顶格
-        \textbf{\\\ 关键字：编译器；LLVM IR；RISC-V 汇编；SysY；链接}\textbf{} \\\ \\\
-    \end{abstract}
 %----------------------------------------------------------------
-\tableofcontents
+\newpage\tableofcontents
 %----------------------------------------------------------------
 \newpage
 
-\setcounter{page}{1}
+\pagenumbering{arabic}
 
 %==================================================================
 \section{引言}
@@ -70,7 +72,7 @@ SysY 编译器（词法分析、语法分析、类型检查与中间代码生成
         建立直观认识与技术储备。
 \end{enumerate}
 
-\subsection{实验环境（张龙飞）}
+\subsection{工作流程实验环境}
 本实验在 WSL2（Windows Subsystem for Linux）中进行，使用 QEMU 用户态模拟器
 运行 RISC-V 目标程序。主要工具及版本如表\ref{tab:env}所示。
 
@@ -91,18 +93,12 @@ SysY 编译器（词法分析、语法分析、类型检查与中间代码生成
   \caption{实验环境与工具版本}
   \label{tab:env}
 \end{table}
-\subsection{实验环境（袁煜杰）}
+\subsection{IR 与 MLIR 实验环境}
 实际运行环境为 WSL Ubuntu 26.04.1 LTS（x86\_64），Clang/LLVM 21.1.8，
 RISC-V GCC 15.2.0，QEMU 10.2.1。MLIR 21.1.8 工具从 Ubuntu 官方源下载并在项目内解压。
 详细命令和版本保存在实验结果目录中。
 
-\subsection{小组分工}
-袁煜杰（ashalghy-hub）负责基本要求二的 LLVM IR 手写程序与验证、进阶 MLIR 探索
-及相应报告；张龙飞（3769lkj）负责基本要求二的手写 RISC-V 汇编，
-并继续完善已有工作流程实验分析。两人共同整合一份报告，开头说明分工，分别提交。
-本版本保留搭档尚未补齐的内容，完整的袁煜杰部分另提供独立附件。
-
-\section{编译系统工作流程研究（张龙飞）}
+\section{基本要求一：编译系统工作流程研究}
 %==================================================================
 % 本大题两人各自独立完成、独立撰写。以下骨架基于 PPT 示例的 C++ 版
 % 阶乘程序 fact.cpp，命令与数据均已实测，可直接替换为你们自己的截图与观察。
@@ -307,72 +303,31 @@ $ echo 5 | qemu-riscv64 ./fact_rv64   # RISC-V 可执行（QEMU 模拟）
 【待补全：结合表\ref{tab:opt}及更多探索（如 \texttt{-g} 选项、微调源程序）
 分析优化器行为】
 
-\section{LLVM IR 与汇编编程实践}
+\section{基本要求二：LLVM IR 与 RISC-V 编程}
 \input{llvm_ir_yuan.tex}
-
-\subsection{手写 RISC-V 汇编程序及验证}
-% 【小题二任务二负责人撰写】
-手写 RISC-V（RV64）汇编遵循标准调用约定（a0--a7 传参、ra 保存返回地址、
-s0--s11 为被调者保存寄存器）：
-
-\begin{lstlisting}[title={手写 RISC-V 汇编：fact\_manual\_rv.s（关键片段）}]
-main:
-    addi  sp, sp, -32
-    sd    ra, 24(sp)
-    sd    s0, 16(sp)
-    sd    s1, 8(sp)
-    sd    s2, 0(sp)
-    call  getint          # a0 = n
-    mv    s0, a0
-    li    s1, 2           # i = 2
-    li    s2, 1           # f = 1
-.Lloop:
-    bgt   s1, s0, .Ldone  # while (i <= n)
-    mul   s2, s2, s1      # f = f * i
-    addi  s1, s1, 1       # i = i + 1
-    j     .Lloop
-.Ldone:
-    mv    a0, s2
-    call  putint
-    li    a0, 10
-    call  putch
-    li    a0, 0
-    ld    ra, 24(sp)
-    ld    s0, 16(sp)
-    ld    s1, 8(sp)
-    ld    s2, 0(sp)
-    addi  sp, sp, 32
-    ret
-\end{lstlisting}
-
-交叉编译并通过 QEMU 运行，输入 7 输出 5040，结果正确：
-
-\begin{lstlisting}[language=bash]
-$ riscv64-linux-gnu-gcc -static fact_manual_rv.s sylib.c -o fact_manual_rv
-$ echo 7 | qemu-riscv64 ./fact_manual_rv
-5040
-\end{lstlisting}
-
-【待补全：更多示例程序的手写汇编与验证过程，可对比手写汇编与
-\texttt{riscv64-linux-gnu-gcc -S} 自动生成汇编的差异】
-
-\subsection{共同验收状态}
-已有循环阶乘手写汇编完成入门验证。扩展 LLVM IR 的 236 项检查见前述章节，
-其中自动生成的 RISC-V 汇编不计入搭档的手写任务。
-更多手写汇编需由张龙飞完成后按同源程序、同输入和同预期结果接入验收。
+\input{riscv_basic2.tex}
 
 \section{进阶要求：MLIR 多级中间表示探索}
 \input{mlir_yuan.tex}
 
+\clearpage
 \section{总结与体会}
-袁煜杰负责的手写 LLVM IR 与 MLIR 实验已取得可复现结果。
-SSA 合流、短路求值、数组布局和目标 ABI 需要同时满足结构与语义要求，
-多级 IR 降低则展示抽象信息如何逐层转为循环、访存与指针操作。
-共同报告仍需搭档补齐工作流程分析及扩展手写汇编，再统一提交。
-本机仅使用最小教学运行库，取得课程正式库后还需复测。
+六组 SysY 示例、手写 LLVM IR、手写 RISC-V 汇编及其运行验证构成基本要求二的完整实验链。
+SSA 合流、短路执行顺序、数组布局和调用约定需要同时满足结构与语义要求。
+269 项检查均通过，但有限输入不能证明任意输入下的等价性。
+MLIR 实验进一步展示索引映射、循环、控制流、内存描述符和目标接口如何逐层具体化，
+CPU VecAdd 的 16 项元素检查通过；Ascend 专有方言部分按文档研究保留清晰证据边界。
+
+完整源码、手写汇编、命令和输出见 \path{prep/llvm_ir/}；MLIR 检查点见 \path{prep/mlir/results/}。
+实验可分别通过 \path{prep/llvm_ir/verify.py} 和 \path{prep/mlir/run_lowering.py} 复现。
+本机链接的是最小教学运行库，取得课程正式库后需复测。
+本报告保留基本要求一已有材料，其待补分析和图示仍须在最终提交前完善；
+本次整合不将未完成的工作流程正文计为已验收内容。
 
 
+\newpage
 \begin{thebibliography}{9}
+\bibitem{riscvabi} RISC-V International. RISC-V ABIs Specification. \url{https://riscv-non-isa.github.io/riscv-elf-psabi-doc/}.
 \bibitem{llvmref} LLVM Project. LLVM Language Reference Manual. \url{https://llvm.org/docs/LangRef.html}.
 \bibitem{ascendexample} AscendNPU IR. 快速入门示例. \url{https://ascendnpu-ir.gitcode.com/zh_cn/sources/introduction/quick_start/examples_zh.html}.
 \bibitem{ascendarchitecture} AscendNPU IR. 架构介绍. \url{https://ascendnpu-ir.gitcode.com/zh_cn/sources/introduction/architecture_zh.html}.
