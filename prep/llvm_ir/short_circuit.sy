@@ -1,0 +1,12 @@
+// Observable side effect and guarded division prove short-circuit evaluation.
+int hits = 0;
+int touch() { hits = hits + 1; return 1; }
+int main() {
+    int n = getint();
+    if (n != 0 && 12 / n > 2) putint(1); else putint(0);
+    putch(10);
+    if (n == 0 || touch()) putint(2); else putint(3);
+    putch(10);
+    putint(hits); putch(10);
+    return 0;
+}

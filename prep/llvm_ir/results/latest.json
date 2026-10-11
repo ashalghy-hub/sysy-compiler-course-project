@@ -1,0 +1,2390 @@
+{
+  "environment": {
+    "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+    "os_release": "PRETTY_NAME=\"Ubuntu 26.04.1 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"26.04\"\nVERSION=\"26.04.1 LTS (Resolute Raccoon)\"\nVERSION_CODENAME=resolute\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=resolute\nLOGO=ubuntu-logo\n",
+    "tools": {
+      "clang": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+      "llvm-as": "Ubuntu LLVM version 21.1.8",
+      "opt": "Ubuntu LLVM version 21.1.8",
+      "llc": "Ubuntu LLVM version 21.1.8",
+      "lli": "Ubuntu LLVM version 21.1.8",
+      "riscv64-linux-gnu-gcc": "riscv64-linux-gnu-gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0",
+      "qemu-riscv64": "qemu-riscv64 version 10.2.1 (Debian 1:10.2.1+ds-1ubuntu3.2)"
+    }
+  },
+  "summary": {
+    "passed": 236,
+    "total": 236
+  },
+  "mem2reg": {
+    "before": {
+      "alloca": 2,
+      "load": 3,
+      "store": 4,
+      "phi": 0
+    },
+    "after": {
+      "alloca": 0,
+      "load": 0,
+      "store": 0,
+      "phi": 2
+    }
+  },
+  "checks": [
+    {
+      "program": "arithmetic",
+      "variant": "reference_native",
+      "input": -7,
+      "expected": "1\n7\n-7\n-7\n",
+      "stdout": "1\n7\n-7\n-7\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "reference_rv",
+      "input": -7,
+      "expected": "1\n7\n-7\n-7\n",
+      "stdout": "1\n7\n-7\n-7\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_native_O0",
+      "input": -7,
+      "expected": "1\n7\n-7\n-7\n",
+      "stdout": "1\n7\n-7\n-7\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_rv_O0",
+      "input": -7,
+      "expected": "1\n7\n-7\n-7\n",
+      "stdout": "1\n7\n-7\n-7\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_native_O2",
+      "input": -7,
+      "expected": "1\n7\n-7\n-7\n",
+      "stdout": "1\n7\n-7\n-7\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_rv_O2",
+      "input": -7,
+      "expected": "1\n7\n-7\n-7\n",
+      "stdout": "1\n7\n-7\n-7\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_lli",
+      "input": -7,
+      "expected": "1\n7\n-7\n-7\n",
+      "stdout": "1\n7\n-7\n-7\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "reference_native",
+      "input": -1,
+      "expected": "10\n1\n-1\n-1\n",
+      "stdout": "10\n1\n-1\n-1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "reference_rv",
+      "input": -1,
+      "expected": "10\n1\n-1\n-1\n",
+      "stdout": "10\n1\n-1\n-1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_native_O0",
+      "input": -1,
+      "expected": "10\n1\n-1\n-1\n",
+      "stdout": "10\n1\n-1\n-1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_rv_O0",
+      "input": -1,
+      "expected": "10\n1\n-1\n-1\n",
+      "stdout": "10\n1\n-1\n-1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_native_O2",
+      "input": -1,
+      "expected": "10\n1\n-1\n-1\n",
+      "stdout": "10\n1\n-1\n-1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_rv_O2",
+      "input": -1,
+      "expected": "10\n1\n-1\n-1\n",
+      "stdout": "10\n1\n-1\n-1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_lli",
+      "input": -1,
+      "expected": "10\n1\n-1\n-1\n",
+      "stdout": "10\n1\n-1\n-1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "reference_native",
+      "input": 0,
+      "expected": "13\n0\n0\n1\n",
+      "stdout": "13\n0\n0\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "reference_rv",
+      "input": 0,
+      "expected": "13\n0\n0\n1\n",
+      "stdout": "13\n0\n0\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_native_O0",
+      "input": 0,
+      "expected": "13\n0\n0\n1\n",
+      "stdout": "13\n0\n0\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_rv_O0",
+      "input": 0,
+      "expected": "13\n0\n0\n1\n",
+      "stdout": "13\n0\n0\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_native_O2",
+      "input": 0,
+      "expected": "13\n0\n0\n1\n",
+      "stdout": "13\n0\n0\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_rv_O2",
+      "input": 0,
+      "expected": "13\n0\n0\n1\n",
+      "stdout": "13\n0\n0\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_lli",
+      "input": 0,
+      "expected": "13\n0\n0\n1\n",
+      "stdout": "13\n0\n0\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "reference_native",
+      "input": 1,
+      "expected": "16\n-1\n1\n1\n",
+      "stdout": "16\n-1\n1\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "reference_rv",
+      "input": 1,
+      "expected": "16\n-1\n1\n1\n",
+      "stdout": "16\n-1\n1\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_native_O0",
+      "input": 1,
+      "expected": "16\n-1\n1\n1\n",
+      "stdout": "16\n-1\n1\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_rv_O0",
+      "input": 1,
+      "expected": "16\n-1\n1\n1\n",
+      "stdout": "16\n-1\n1\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_native_O2",
+      "input": 1,
+      "expected": "16\n-1\n1\n1\n",
+      "stdout": "16\n-1\n1\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_rv_O2",
+      "input": 1,
+      "expected": "16\n-1\n1\n1\n",
+      "stdout": "16\n-1\n1\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_lli",
+      "input": 1,
+      "expected": "16\n-1\n1\n1\n",
+      "stdout": "16\n-1\n1\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "reference_native",
+      "input": 7,
+      "expected": "25\n-7\n7\n7\n",
+      "stdout": "25\n-7\n7\n7\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "reference_rv",
+      "input": 7,
+      "expected": "25\n-7\n7\n7\n",
+      "stdout": "25\n-7\n7\n7\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_native_O0",
+      "input": 7,
+      "expected": "25\n-7\n7\n7\n",
+      "stdout": "25\n-7\n7\n7\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_rv_O0",
+      "input": 7,
+      "expected": "25\n-7\n7\n7\n",
+      "stdout": "25\n-7\n7\n7\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_native_O2",
+      "input": 7,
+      "expected": "25\n-7\n7\n7\n",
+      "stdout": "25\n-7\n7\n7\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_rv_O2",
+      "input": 7,
+      "expected": "25\n-7\n7\n7\n",
+      "stdout": "25\n-7\n7\n7\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_lli",
+      "input": 7,
+      "expected": "25\n-7\n7\n7\n",
+      "stdout": "25\n-7\n7\n7\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "reference_native",
+      "input": 12,
+      "expected": "31\n-12\n12\n12\n",
+      "stdout": "31\n-12\n12\n12\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "reference_rv",
+      "input": 12,
+      "expected": "31\n-12\n12\n12\n",
+      "stdout": "31\n-12\n12\n12\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_native_O0",
+      "input": 12,
+      "expected": "31\n-12\n12\n12\n",
+      "stdout": "31\n-12\n12\n12\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_rv_O0",
+      "input": 12,
+      "expected": "31\n-12\n12\n12\n",
+      "stdout": "31\n-12\n12\n12\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_native_O2",
+      "input": 12,
+      "expected": "31\n-12\n12\n12\n",
+      "stdout": "31\n-12\n12\n12\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_rv_O2",
+      "input": 12,
+      "expected": "31\n-12\n12\n12\n",
+      "stdout": "31\n-12\n12\n12\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "ir_lli",
+      "input": 12,
+      "expected": "31\n-12\n12\n12\n",
+      "stdout": "31\n-12\n12\n12\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "reference_native",
+      "input": -3,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "reference_rv",
+      "input": -3,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_native_O0",
+      "input": -3,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_rv_O0",
+      "input": -3,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_native_O2",
+      "input": -3,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_rv_O2",
+      "input": -3,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_lli",
+      "input": -3,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "reference_native",
+      "input": 0,
+      "expected": "0\n2\n0\n",
+      "stdout": "0\n2\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "reference_rv",
+      "input": 0,
+      "expected": "0\n2\n0\n",
+      "stdout": "0\n2\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_native_O0",
+      "input": 0,
+      "expected": "0\n2\n0\n",
+      "stdout": "0\n2\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_rv_O0",
+      "input": 0,
+      "expected": "0\n2\n0\n",
+      "stdout": "0\n2\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_native_O2",
+      "input": 0,
+      "expected": "0\n2\n0\n",
+      "stdout": "0\n2\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_rv_O2",
+      "input": 0,
+      "expected": "0\n2\n0\n",
+      "stdout": "0\n2\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_lli",
+      "input": 0,
+      "expected": "0\n2\n0\n",
+      "stdout": "0\n2\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "reference_native",
+      "input": 1,
+      "expected": "1\n2\n1\n",
+      "stdout": "1\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "reference_rv",
+      "input": 1,
+      "expected": "1\n2\n1\n",
+      "stdout": "1\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_native_O0",
+      "input": 1,
+      "expected": "1\n2\n1\n",
+      "stdout": "1\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_rv_O0",
+      "input": 1,
+      "expected": "1\n2\n1\n",
+      "stdout": "1\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_native_O2",
+      "input": 1,
+      "expected": "1\n2\n1\n",
+      "stdout": "1\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_rv_O2",
+      "input": 1,
+      "expected": "1\n2\n1\n",
+      "stdout": "1\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_lli",
+      "input": 1,
+      "expected": "1\n2\n1\n",
+      "stdout": "1\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "reference_native",
+      "input": 4,
+      "expected": "1\n2\n1\n",
+      "stdout": "1\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "reference_rv",
+      "input": 4,
+      "expected": "1\n2\n1\n",
+      "stdout": "1\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_native_O0",
+      "input": 4,
+      "expected": "1\n2\n1\n",
+      "stdout": "1\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_rv_O0",
+      "input": 4,
+      "expected": "1\n2\n1\n",
+      "stdout": "1\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_native_O2",
+      "input": 4,
+      "expected": "1\n2\n1\n",
+      "stdout": "1\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_rv_O2",
+      "input": 4,
+      "expected": "1\n2\n1\n",
+      "stdout": "1\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_lli",
+      "input": 4,
+      "expected": "1\n2\n1\n",
+      "stdout": "1\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "reference_native",
+      "input": 5,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "reference_rv",
+      "input": 5,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_native_O0",
+      "input": 5,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_rv_O0",
+      "input": 5,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_native_O2",
+      "input": 5,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_rv_O2",
+      "input": 5,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_lli",
+      "input": 5,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "reference_native",
+      "input": 12,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "reference_rv",
+      "input": 12,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_native_O0",
+      "input": 12,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_rv_O0",
+      "input": 12,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_native_O2",
+      "input": 12,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_rv_O2",
+      "input": 12,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "ir_lli",
+      "input": 12,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "reference_native",
+      "input": -2,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "reference_rv",
+      "input": -2,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_native_O0",
+      "input": -2,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_rv_O0",
+      "input": -2,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_native_O2",
+      "input": -2,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_rv_O2",
+      "input": -2,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_lli",
+      "input": -2,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "reference_native",
+      "input": 0,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "reference_rv",
+      "input": 0,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_native_O0",
+      "input": 0,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_rv_O0",
+      "input": 0,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_native_O2",
+      "input": 0,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_rv_O2",
+      "input": 0,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_lli",
+      "input": 0,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "reference_native",
+      "input": 1,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "reference_rv",
+      "input": 1,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_native_O0",
+      "input": 1,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_rv_O0",
+      "input": 1,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_native_O2",
+      "input": 1,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_rv_O2",
+      "input": 1,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_lli",
+      "input": 1,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "reference_native",
+      "input": 2,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "reference_rv",
+      "input": 2,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_native_O0",
+      "input": 2,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_rv_O0",
+      "input": 2,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_native_O2",
+      "input": 2,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_rv_O2",
+      "input": 2,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_lli",
+      "input": 2,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "reference_native",
+      "input": 5,
+      "expected": "13\n",
+      "stdout": "13\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "reference_rv",
+      "input": 5,
+      "expected": "13\n",
+      "stdout": "13\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_native_O0",
+      "input": 5,
+      "expected": "13\n",
+      "stdout": "13\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_rv_O0",
+      "input": 5,
+      "expected": "13\n",
+      "stdout": "13\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_native_O2",
+      "input": 5,
+      "expected": "13\n",
+      "stdout": "13\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_rv_O2",
+      "input": 5,
+      "expected": "13\n",
+      "stdout": "13\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_lli",
+      "input": 5,
+      "expected": "13\n",
+      "stdout": "13\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "reference_native",
+      "input": 8,
+      "expected": "13\n",
+      "stdout": "13\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "reference_rv",
+      "input": 8,
+      "expected": "13\n",
+      "stdout": "13\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_native_O0",
+      "input": 8,
+      "expected": "13\n",
+      "stdout": "13\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_rv_O0",
+      "input": 8,
+      "expected": "13\n",
+      "stdout": "13\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_native_O2",
+      "input": 8,
+      "expected": "13\n",
+      "stdout": "13\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_rv_O2",
+      "input": 8,
+      "expected": "13\n",
+      "stdout": "13\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "ir_lli",
+      "input": 8,
+      "expected": "13\n",
+      "stdout": "13\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "reference_native",
+      "input": 0,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "reference_rv",
+      "input": 0,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_native_O0",
+      "input": 0,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_rv_O0",
+      "input": 0,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_native_O2",
+      "input": 0,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_rv_O2",
+      "input": 0,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_lli",
+      "input": 0,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "reference_native",
+      "input": 1,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "reference_rv",
+      "input": 1,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_native_O0",
+      "input": 1,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_rv_O0",
+      "input": 1,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_native_O2",
+      "input": 1,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_rv_O2",
+      "input": 1,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_lli",
+      "input": 1,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "reference_native",
+      "input": 5,
+      "expected": "120\n",
+      "stdout": "120\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "reference_rv",
+      "input": 5,
+      "expected": "120\n",
+      "stdout": "120\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_native_O0",
+      "input": 5,
+      "expected": "120\n",
+      "stdout": "120\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_rv_O0",
+      "input": 5,
+      "expected": "120\n",
+      "stdout": "120\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_native_O2",
+      "input": 5,
+      "expected": "120\n",
+      "stdout": "120\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_rv_O2",
+      "input": 5,
+      "expected": "120\n",
+      "stdout": "120\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_lli",
+      "input": 5,
+      "expected": "120\n",
+      "stdout": "120\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "reference_native",
+      "input": 7,
+      "expected": "5040\n",
+      "stdout": "5040\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "reference_rv",
+      "input": 7,
+      "expected": "5040\n",
+      "stdout": "5040\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_native_O0",
+      "input": 7,
+      "expected": "5040\n",
+      "stdout": "5040\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_rv_O0",
+      "input": 7,
+      "expected": "5040\n",
+      "stdout": "5040\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_native_O2",
+      "input": 7,
+      "expected": "5040\n",
+      "stdout": "5040\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_rv_O2",
+      "input": 7,
+      "expected": "5040\n",
+      "stdout": "5040\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_lli",
+      "input": 7,
+      "expected": "5040\n",
+      "stdout": "5040\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "reference_native",
+      "input": 12,
+      "expected": "479001600\n",
+      "stdout": "479001600\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "reference_rv",
+      "input": 12,
+      "expected": "479001600\n",
+      "stdout": "479001600\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_native_O0",
+      "input": 12,
+      "expected": "479001600\n",
+      "stdout": "479001600\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_rv_O0",
+      "input": 12,
+      "expected": "479001600\n",
+      "stdout": "479001600\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_native_O2",
+      "input": 12,
+      "expected": "479001600\n",
+      "stdout": "479001600\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_rv_O2",
+      "input": 12,
+      "expected": "479001600\n",
+      "stdout": "479001600\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "ir_lli",
+      "input": 12,
+      "expected": "479001600\n",
+      "stdout": "479001600\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "reference_native",
+      "input": -3,
+      "expected": "10\n-8\n0\n",
+      "stdout": "10\n-8\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "reference_rv",
+      "input": -3,
+      "expected": "10\n-8\n0\n",
+      "stdout": "10\n-8\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_native_O0",
+      "input": -3,
+      "expected": "10\n-8\n0\n",
+      "stdout": "10\n-8\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_rv_O0",
+      "input": -3,
+      "expected": "10\n-8\n0\n",
+      "stdout": "10\n-8\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_native_O2",
+      "input": -3,
+      "expected": "10\n-8\n0\n",
+      "stdout": "10\n-8\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_rv_O2",
+      "input": -3,
+      "expected": "10\n-8\n0\n",
+      "stdout": "10\n-8\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_lli",
+      "input": -3,
+      "expected": "10\n-8\n0\n",
+      "stdout": "10\n-8\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "reference_native",
+      "input": -1,
+      "expected": "10\n-2\n0\n",
+      "stdout": "10\n-2\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "reference_rv",
+      "input": -1,
+      "expected": "10\n-2\n0\n",
+      "stdout": "10\n-2\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_native_O0",
+      "input": -1,
+      "expected": "10\n-2\n0\n",
+      "stdout": "10\n-2\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_rv_O0",
+      "input": -1,
+      "expected": "10\n-2\n0\n",
+      "stdout": "10\n-2\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_native_O2",
+      "input": -1,
+      "expected": "10\n-2\n0\n",
+      "stdout": "10\n-2\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_rv_O2",
+      "input": -1,
+      "expected": "10\n-2\n0\n",
+      "stdout": "10\n-2\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_lli",
+      "input": -1,
+      "expected": "10\n-2\n0\n",
+      "stdout": "10\n-2\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "reference_native",
+      "input": 0,
+      "expected": "10\n1\n1\n",
+      "stdout": "10\n1\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "reference_rv",
+      "input": 0,
+      "expected": "10\n1\n1\n",
+      "stdout": "10\n1\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_native_O0",
+      "input": 0,
+      "expected": "10\n1\n1\n",
+      "stdout": "10\n1\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_rv_O0",
+      "input": 0,
+      "expected": "10\n1\n1\n",
+      "stdout": "10\n1\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_native_O2",
+      "input": 0,
+      "expected": "10\n1\n1\n",
+      "stdout": "10\n1\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_rv_O2",
+      "input": 0,
+      "expected": "10\n1\n1\n",
+      "stdout": "10\n1\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_lli",
+      "input": 0,
+      "expected": "10\n1\n1\n",
+      "stdout": "10\n1\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "reference_native",
+      "input": 2,
+      "expected": "10\n7\n1\n",
+      "stdout": "10\n7\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "reference_rv",
+      "input": 2,
+      "expected": "10\n7\n1\n",
+      "stdout": "10\n7\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_native_O0",
+      "input": 2,
+      "expected": "10\n7\n1\n",
+      "stdout": "10\n7\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_rv_O0",
+      "input": 2,
+      "expected": "10\n7\n1\n",
+      "stdout": "10\n7\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_native_O2",
+      "input": 2,
+      "expected": "10\n7\n1\n",
+      "stdout": "10\n7\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_rv_O2",
+      "input": 2,
+      "expected": "10\n7\n1\n",
+      "stdout": "10\n7\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_lli",
+      "input": 2,
+      "expected": "10\n7\n1\n",
+      "stdout": "10\n7\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "reference_native",
+      "input": 7,
+      "expected": "10\n22\n1\n",
+      "stdout": "10\n22\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "reference_rv",
+      "input": 7,
+      "expected": "10\n22\n1\n",
+      "stdout": "10\n22\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_native_O0",
+      "input": 7,
+      "expected": "10\n22\n1\n",
+      "stdout": "10\n22\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_rv_O0",
+      "input": 7,
+      "expected": "10\n22\n1\n",
+      "stdout": "10\n22\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_native_O2",
+      "input": 7,
+      "expected": "10\n22\n1\n",
+      "stdout": "10\n22\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_rv_O2",
+      "input": 7,
+      "expected": "10\n22\n1\n",
+      "stdout": "10\n22\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
+      "variant": "ir_lli",
+      "input": 7,
+      "expected": "10\n22\n1\n",
+      "stdout": "10\n22\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "reference_native",
+      "input": -3,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "reference_rv",
+      "input": -3,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_native_O0",
+      "input": -3,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_rv_O0",
+      "input": -3,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_native_O2",
+      "input": -3,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_rv_O2",
+      "input": -3,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_lli",
+      "input": -3,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "reference_native",
+      "input": 0,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "reference_rv",
+      "input": 0,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_native_O0",
+      "input": 0,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_rv_O0",
+      "input": 0,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_native_O2",
+      "input": 0,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_rv_O2",
+      "input": 0,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_lli",
+      "input": 0,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "reference_native",
+      "input": 1,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "reference_rv",
+      "input": 1,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_native_O0",
+      "input": 1,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_rv_O0",
+      "input": 1,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_native_O2",
+      "input": 1,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_rv_O2",
+      "input": 1,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_lli",
+      "input": 1,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "reference_native",
+      "input": 5,
+      "expected": "10\n",
+      "stdout": "10\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "reference_rv",
+      "input": 5,
+      "expected": "10\n",
+      "stdout": "10\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_native_O0",
+      "input": 5,
+      "expected": "10\n",
+      "stdout": "10\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_rv_O0",
+      "input": 5,
+      "expected": "10\n",
+      "stdout": "10\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_native_O2",
+      "input": 5,
+      "expected": "10\n",
+      "stdout": "10\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_rv_O2",
+      "input": 5,
+      "expected": "10\n",
+      "stdout": "10\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_lli",
+      "input": 5,
+      "expected": "10\n",
+      "stdout": "10\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "reference_native",
+      "input": 10,
+      "expected": "45\n",
+      "stdout": "45\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "reference_rv",
+      "input": 10,
+      "expected": "45\n",
+      "stdout": "45\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_native_O0",
+      "input": 10,
+      "expected": "45\n",
+      "stdout": "45\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_rv_O0",
+      "input": 10,
+      "expected": "45\n",
+      "stdout": "45\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_native_O2",
+      "input": 10,
+      "expected": "45\n",
+      "stdout": "45\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_rv_O2",
+      "input": 10,
+      "expected": "45\n",
+      "stdout": "45\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "ir_lli",
+      "input": 10,
+      "expected": "45\n",
+      "stdout": "45\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "mem2reg_native",
+      "input": -3,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "mem2reg_native",
+      "input": 0,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "mem2reg_native",
+      "input": 1,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "mem2reg_native",
+      "input": 5,
+      "expected": "10\n",
+      "stdout": "10\n",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "mem2reg_native",
+      "input": 10,
+      "expected": "45\n",
+      "stdout": "45\n",
+      "returncode": 0,
+      "passed": true
+    }
+  ]
+}

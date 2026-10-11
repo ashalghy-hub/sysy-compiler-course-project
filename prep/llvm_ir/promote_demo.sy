@@ -1,0 +1,5 @@
+int main() {
+    int n = getint(), i = 0, sum = 0;
+    while (i < n) { sum = sum + i; i = i + 1; }
+    putint(sum); putch(10); return 0;
+}

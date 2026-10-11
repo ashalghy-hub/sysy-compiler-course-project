@@ -1,0 +1,6 @@
+int factorial(int n) {
+    if (n <= 1) return 1;
+    return n * factorial(n - 1);
+}
+void emit(int value) { putint(value); putch(10); return; }
+int main() { int n = getint(); emit(factorial(n)); return 0; }

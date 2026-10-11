@@ -1,0 +1,17 @@
+int row_sum(int a[][3], int row) {
+    int j = 0, sum = 0;
+    while (j < 3) { sum = sum + a[row][j]; j = j + 1; }
+    return sum;
+}
+float twice(float x) { return x * 2.0; }
+int main() {
+    int a[2][3] = {{1, 2, 3}, {4}};
+    int n = getint();
+    float scaled = twice(n * 1.5 + 0.5);
+    int truncated = scaled;
+    putint(row_sum(a, 0) + row_sum(a, 1)); putch(10);
+    putint(truncated); putch(10);
+    if (scaled > 0.0) putint(1); else putint(0);
+    putch(10);
+    return 0;
+}

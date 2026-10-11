@@ -1,0 +1,103 @@
+[
+  {
+    "command": [
+      "/mnt/d/vscodefile/编译系统上机大作业/tmp/mlir-tools/unpack/usr/lib/llvm-21/bin/mlir-opt",
+      "--version"
+    ],
+    "returncode": 0,
+    "stdout": "Ubuntu LLVM version 21.1.8\n  Optimized build.\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/d/vscodefile/编译系统上机大作业/tmp/mlir-tools/unpack/usr/lib/llvm-21/bin/mlir-opt",
+      "prep/mlir/vecadd.mlir",
+      "-o",
+      "prep/mlir/results/00_linalg.mlir"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/d/vscodefile/编译系统上机大作业/tmp/mlir-tools/unpack/usr/lib/llvm-21/bin/mlir-opt",
+      "prep/mlir/results/00_linalg.mlir",
+      "--convert-linalg-to-loops",
+      "-o",
+      "prep/mlir/results/01_scf.mlir"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/d/vscodefile/编译系统上机大作业/tmp/mlir-tools/unpack/usr/lib/llvm-21/bin/mlir-opt",
+      "prep/mlir/results/01_scf.mlir",
+      "--convert-scf-to-cf",
+      "-o",
+      "prep/mlir/results/02_cf.mlir"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/d/vscodefile/编译系统上机大作业/tmp/mlir-tools/unpack/usr/lib/llvm-21/bin/mlir-opt",
+      "prep/mlir/results/02_cf.mlir",
+      "--convert-to-llvm",
+      "--reconcile-unrealized-casts",
+      "-o",
+      "prep/mlir/results/03_llvm.mlir"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/d/vscodefile/编译系统上机大作业/tmp/mlir-tools/unpack/usr/lib/llvm-21/bin/mlir-translate",
+      "--mlir-to-llvmir",
+      "prep/mlir/results/03_llvm.mlir",
+      "-o",
+      "prep/mlir/results/04_llvm.ll"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "opt",
+      "-passes=verify",
+      "-disable-output",
+      "prep/mlir/results/04_llvm.ll"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "clang",
+      "prep/mlir/results/04_llvm.ll",
+      "prep/mlir/driver.c",
+      "-Wno-override-module",
+      "-o",
+      "build/prep-mlir/vecadd"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-mlir/vecadd"
+    ],
+    "returncode": 0,
+    "stdout": "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16\n",
+    "stderr": ""
+  }
+]

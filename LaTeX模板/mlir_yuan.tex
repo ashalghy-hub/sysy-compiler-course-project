@@ -1,0 +1,115 @@
+\subsection{探索目标与证据边界}
+本部分由袁煜杰完成，研究预备工作进阶要求中的 MLIR 中端处理。
+首先查阅课件指定的 AscendNPU IR VecAdd 示例与方言文档，再构造上游 MLIR
+的同类逐元素加法程序，真实执行多层降低、保存检查点，并验证末端运行结果。
+两条路线分别是官方 NPU 文档研究与本机 CPU 实验，不将后者写成前者的上板结果。
+
+本机未发现 bishengir-compile、CANN 工具链目录或 NPU 设备节点。
+课件允许环境配置困难时通过文档阅读、方言差异和探索过程完成进阶说明。
+因此 Ascend 专有流程采用文档研究，不编造设备输出或性能数据。
+另从 Ubuntu 官方源下载 MLIR 21.1.8 的工具和共享库，解压到项目临时目录，
+不安装到系统；由脚本设置进程内的共享库搜索路径。
+
+\subsection{AscendNPU IR VecAdd 的方言与层级}
+官方快速入门\cite{ascendexample}的 VecAdd 使用 i16 元素，并区分 GM 与 UB
+地址空间。输入先搬入片上缓冲，再进行向量加法，最后搬回输出；设备入口用
+HACC 属性表达。编译后还需要 CANN runtime 注册和启动设备程序。
+这与仅把数组指针传给 CPU 函数的执行环境不同。
+
+架构说明\cite{ascendarchitecture}把 HFusion、HIVM、HACC 分为高层融合、
+硬件相关计算/搬运/同步、异构执行表达等职责。结合 HIVM 文档\cite{hivmref}，
+可以看到片上内存和计算流水信息在特定层被显式保留。
+\textbf{快速入门直接给出 HIVM 级程序，不能由该输入声称已经实际观察到
+HFusion 到 HIVM 的转换。}本报告的层级关系来自官方架构说明，非本机 pass 日志。
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabular}{p{0.22\linewidth}p{0.31\linewidth}p{0.36\linewidth}}
+\toprule
+比较点 & 上游 CPU 实验 & Ascend 官方文档路线\\
+\midrule
+高层计算 & Linalg 通用逐元素计算 & HFusion 等较高层表达\\
+硬件相关操作 & 普通 MemRef 访存 & HIVM 中的计算、搬运、同步\\
+内存空间 & 本机普通内存 & GM、UB 等硬件空间\\
+执行接口 & MLIR 生成 C 包装函数 & HACC 入口及 CANN runtime\\
+证据 & 本机各层输出与运行检查 & 官方示例和架构文档分析\\
+\bottomrule
+\end{tabular}
+\caption{两种路线的职责与证据差异}
+\end{table}
+
+\subsection{可执行的上游 VecAdd 设计}
+独立设计的 \texttt{prep/mlir/vecadd.mlir} 使用三个
+\texttt{memref<16xi16>} 参数。Linalg 的三个恒等索引映射表示
+$c[i]=a[i]+b[i]$，迭代属性 parallel 表明各元素计算互相独立。
+这保留了后续选择循环或向量化策略的空间，但本次选择的是标量循环路线。
+\begin{lstlisting}
+linalg.generic {
+  indexing_maps = [affine_map<(i)->(i)>,
+                  affine_map<(i)->(i)>, affine_map<(i)->(i)>],
+  iterator_types = ["parallel"]
+} ins(%a, %b : memref<16xi16>, memref<16xi16>)
+  outs(%c : memref<16xi16>) {
+^bb0(%x: i16, %y: i16, %old: i16):
+  %sum = arith.addi %x, %y : i16
+  linalg.yield %sum : i16
+}
+\end{lstlisting}
+这是本次手写的上游例子，不是复制或执行 Ascend 专有程序。
+输入数组设为 $a[i]=i$、$b[i]=1$（$0\leq i<16$），C 驱动逐项检查输出。
+
+\subsection{逐层 lowering 与检查点}
+上游 MLIR 文档介绍结构化 SCF 与非结构化 CF 的区分\cite{scfref}。
+本次根据工具可用 pass\cite{mlirpasses}执行如下管线，每一步均保存文件：
+\begin{lstlisting}[language=bash]
+mlir-opt vecadd.mlir -o 00_linalg.mlir
+mlir-opt 00_linalg.mlir --convert-linalg-to-loops -o 01_scf.mlir
+mlir-opt 01_scf.mlir --convert-scf-to-cf -o 02_cf.mlir
+mlir-opt 02_cf.mlir --convert-to-llvm \
+    --reconcile-unrealized-casts -o 03_llvm.mlir
+mlir-translate --mlir-to-llvmir 03_llvm.mlir -o 04_llvm.ll
+\end{lstlisting}
+完整脚本 \texttt{prep/mlir/run\_lowering.py} 支持系统工具或项目内便携工具。
+上述路径在脚本中落实为 results 下的检查点，不依赖工作目录的绝对用户名。
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabular}{lrl}
+\toprule
+检查点 & 行数 & 实际观察到的操作方言\\
+\midrule
+00\_linalg & 12 & Linalg、Arith、Func\\
+01\_scf & 15 & SCF、MemRef、Arith、Func\\
+02\_cf & 21 & CF、MemRef、Arith、Func\\
+03\_llvm & 67 & LLVM\\
+\bottomrule
+\end{tabular}
+\caption{实际保存的 MLIR 检查点（不把接口属性计为操作）}
+\end{table}
+
+首先 generic 被展开为 \texttt{scf.for}，循环体出现两个 memref.load、一次
+arith.addi 和一次 memref.store。接着循环被拆成比较、条件分支、循环体和回边，
+迭代变量通过块参数传递；结构化循环这个概念不再显式保留。
+再向 LLVM 方言转换时，MemRef 描述符中的已分配地址、对齐地址、偏移、长度和步长
+被显式展开，生成与 C 调用者衔接的包装函数。
+最后 \texttt{mlir-translate} 才输出真正的 LLVM IR。
+因此 \texttt{llvm.*} 操作所在的 MLIR 文件，与 LLVM 自身的 \texttt{.ll} 文件
+并不是同一种文本格式。
+
+\subsection{末端验证与分析}
+C 驱动构造与一维 MemRef 对应的描述符，通过
+\texttt{\_mlir\_ciface\_vecadd} 调用降低后的程序。
+本次 LLVM verifier 检查通过，Clang 编译链接后实际输出：
+\begin{lstlisting}
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+\end{lstlisting}
+驱动逐个断言全部 16 个元素正确，退出码 0。
+版本、命令、stderr 和结果保存于 \path{prep/mlir/results/}。
+行数从 12 增至 67，主要由内存描述符和接口展开造成；该数字不能直接说明运行速度。
+本次没有测量 NPU 性能，也未执行片上搬运或同步操作。
+
+多级 IR 的价值在于暂时保留当前优化需要的抽象，再逐步选择具体实现。
+高层可以讨论索引映射和融合，中层明确循环和内存行为，低层处理指针与调用约定。
+若直接从源程序进入 LLVM IR，这些高层信息通常需要重新推断。
+与此同时，降低并非仅改指令名称：类型、控制流、内存表示与接口也必须同步转换。
+上游工具未注册 HIVM/HACC 方言，不能简单套用本次 CPU pass 管线编译官方 NPU 输入。

@@ -1,0 +1,46 @@
+{
+  "tool_version": "Ubuntu LLVM version 21.1.8\n  Optimized build.\n",
+  "stages": [
+    {
+      "file": "prep/mlir/results/00_linalg.mlir",
+      "dialects": [
+        "arith",
+        "func",
+        "linalg"
+      ],
+      "lines": 12
+    },
+    {
+      "file": "prep/mlir/results/01_scf.mlir",
+      "dialects": [
+        "arith",
+        "func",
+        "memref",
+        "scf"
+      ],
+      "lines": 15
+    },
+    {
+      "file": "prep/mlir/results/02_cf.mlir",
+      "dialects": [
+        "arith",
+        "cf",
+        "func",
+        "memref"
+      ],
+      "lines": 21
+    },
+    {
+      "file": "prep/mlir/results/03_llvm.mlir",
+      "dialects": [
+        "llvm"
+      ],
+      "lines": 67
+    }
+  ],
+  "stdout": "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16\n",
+  "expected": "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16\n",
+  "passed": true,
+  "elements_checked": 16,
+  "execution_target": "x86_64 CPU; not Ascend NPU"
+}

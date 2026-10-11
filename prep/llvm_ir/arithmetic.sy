@@ -1,0 +1,12 @@
+// Yuan Yujie: arithmetic, constants, lexical scope and logical-not conversion.
+const int bias = 3;
+int main() {
+    int n = getint();
+    int answer = (n + bias) * 2 - n / 2 + n % 3;
+    { int n = 7; answer = answer + n; }
+    putint(answer); putch(10);
+    putint(-n); putch(10);
+    putint(+n); putch(10);
+    putint(n + !n); putch(10);
+    return 0;
+}
