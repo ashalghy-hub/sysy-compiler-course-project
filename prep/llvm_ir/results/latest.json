@@ -13,8 +13,8 @@
     }
   },
   "summary": {
-    "passed": 236,
-    "total": 236
+    "passed": 269,
+    "total": 269
   },
   "mem2reg": {
     "before": {
@@ -103,6 +103,16 @@
     },
     {
       "program": "arithmetic",
+      "variant": "handwritten_rv",
+      "input": -7,
+      "expected": "1\n7\n-7\n-7\n",
+      "stdout": "1\n7\n-7\n-7\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
       "variant": "reference_native",
       "input": -1,
       "expected": "10\n1\n-1\n-1\n",
@@ -164,6 +174,16 @@
     {
       "program": "arithmetic",
       "variant": "ir_lli",
+      "input": -1,
+      "expected": "10\n1\n-1\n-1\n",
+      "stdout": "10\n1\n-1\n-1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "handwritten_rv",
       "input": -1,
       "expected": "10\n1\n-1\n-1\n",
       "stdout": "10\n1\n-1\n-1\n",
@@ -243,6 +263,16 @@
     },
     {
       "program": "arithmetic",
+      "variant": "handwritten_rv",
+      "input": 0,
+      "expected": "13\n0\n0\n1\n",
+      "stdout": "13\n0\n0\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
       "variant": "reference_native",
       "input": 1,
       "expected": "16\n-1\n1\n1\n",
@@ -304,6 +334,16 @@
     {
       "program": "arithmetic",
       "variant": "ir_lli",
+      "input": 1,
+      "expected": "16\n-1\n1\n1\n",
+      "stdout": "16\n-1\n1\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
+      "variant": "handwritten_rv",
       "input": 1,
       "expected": "16\n-1\n1\n1\n",
       "stdout": "16\n-1\n1\n1\n",
@@ -383,6 +423,16 @@
     },
     {
       "program": "arithmetic",
+      "variant": "handwritten_rv",
+      "input": 7,
+      "expected": "25\n-7\n7\n7\n",
+      "stdout": "25\n-7\n7\n7\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "arithmetic",
       "variant": "reference_native",
       "input": 12,
       "expected": "31\n-12\n12\n12\n",
@@ -452,6 +502,16 @@
       "passed": true
     },
     {
+      "program": "arithmetic",
+      "variant": "handwritten_rv",
+      "input": 12,
+      "expected": "31\n-12\n12\n12\n",
+      "stdout": "31\n-12\n12\n12\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
       "program": "short_circuit",
       "variant": "reference_native",
       "input": -3,
@@ -514,6 +574,16 @@
     {
       "program": "short_circuit",
       "variant": "ir_lli",
+      "input": -3,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "handwritten_rv",
       "input": -3,
       "expected": "0\n2\n1\n",
       "stdout": "0\n2\n1\n",
@@ -593,6 +663,16 @@
     },
     {
       "program": "short_circuit",
+      "variant": "handwritten_rv",
+      "input": 0,
+      "expected": "0\n2\n0\n",
+      "stdout": "0\n2\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
       "variant": "reference_native",
       "input": 1,
       "expected": "1\n2\n1\n",
@@ -654,6 +734,16 @@
     {
       "program": "short_circuit",
       "variant": "ir_lli",
+      "input": 1,
+      "expected": "1\n2\n1\n",
+      "stdout": "1\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "handwritten_rv",
       "input": 1,
       "expected": "1\n2\n1\n",
       "stdout": "1\n2\n1\n",
@@ -733,6 +823,16 @@
     },
     {
       "program": "short_circuit",
+      "variant": "handwritten_rv",
+      "input": 4,
+      "expected": "1\n2\n1\n",
+      "stdout": "1\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
       "variant": "reference_native",
       "input": 5,
       "expected": "0\n2\n1\n",
@@ -803,6 +903,16 @@
     },
     {
       "program": "short_circuit",
+      "variant": "handwritten_rv",
+      "input": 5,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
       "variant": "reference_native",
       "input": 12,
       "expected": "0\n2\n1\n",
@@ -864,6 +974,16 @@
     {
       "program": "short_circuit",
       "variant": "ir_lli",
+      "input": 12,
+      "expected": "0\n2\n1\n",
+      "stdout": "0\n2\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "short_circuit",
+      "variant": "handwritten_rv",
       "input": 12,
       "expected": "0\n2\n1\n",
       "stdout": "0\n2\n1\n",
@@ -943,6 +1063,16 @@
     },
     {
       "program": "loop_control",
+      "variant": "handwritten_rv",
+      "input": -2,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
       "variant": "reference_native",
       "input": 0,
       "expected": "0\n",
@@ -1013,6 +1143,16 @@
     },
     {
       "program": "loop_control",
+      "variant": "handwritten_rv",
+      "input": 0,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
       "variant": "reference_native",
       "input": 1,
       "expected": "1\n",
@@ -1074,6 +1214,16 @@
     {
       "program": "loop_control",
       "variant": "ir_lli",
+      "input": 1,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
+      "variant": "handwritten_rv",
       "input": 1,
       "expected": "1\n",
       "stdout": "1\n",
@@ -1153,6 +1303,16 @@
     },
     {
       "program": "loop_control",
+      "variant": "handwritten_rv",
+      "input": 2,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
       "variant": "reference_native",
       "input": 5,
       "expected": "13\n",
@@ -1223,6 +1383,16 @@
     },
     {
       "program": "loop_control",
+      "variant": "handwritten_rv",
+      "input": 5,
+      "expected": "13\n",
+      "stdout": "13\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "loop_control",
       "variant": "reference_native",
       "input": 8,
       "expected": "13\n",
@@ -1292,6 +1462,16 @@
       "passed": true
     },
     {
+      "program": "loop_control",
+      "variant": "handwritten_rv",
+      "input": 8,
+      "expected": "13\n",
+      "stdout": "13\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
       "program": "functions",
       "variant": "reference_native",
       "input": 0,
@@ -1363,6 +1543,16 @@
     },
     {
       "program": "functions",
+      "variant": "handwritten_rv",
+      "input": 0,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
       "variant": "reference_native",
       "input": 1,
       "expected": "1\n",
@@ -1424,6 +1614,16 @@
     {
       "program": "functions",
       "variant": "ir_lli",
+      "input": 1,
+      "expected": "1\n",
+      "stdout": "1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "handwritten_rv",
       "input": 1,
       "expected": "1\n",
       "stdout": "1\n",
@@ -1503,6 +1703,16 @@
     },
     {
       "program": "functions",
+      "variant": "handwritten_rv",
+      "input": 5,
+      "expected": "120\n",
+      "stdout": "120\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
       "variant": "reference_native",
       "input": 7,
       "expected": "5040\n",
@@ -1573,6 +1783,16 @@
     },
     {
       "program": "functions",
+      "variant": "handwritten_rv",
+      "input": 7,
+      "expected": "5040\n",
+      "stdout": "5040\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
       "variant": "reference_native",
       "input": 12,
       "expected": "479001600\n",
@@ -1634,6 +1854,16 @@
     {
       "program": "functions",
       "variant": "ir_lli",
+      "input": 12,
+      "expected": "479001600\n",
+      "stdout": "479001600\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "functions",
+      "variant": "handwritten_rv",
       "input": 12,
       "expected": "479001600\n",
       "stdout": "479001600\n",
@@ -1713,6 +1943,16 @@
     },
     {
       "program": "array_float",
+      "variant": "handwritten_rv",
+      "input": -3,
+      "expected": "10\n-8\n0\n",
+      "stdout": "10\n-8\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
       "variant": "reference_native",
       "input": -1,
       "expected": "10\n-2\n0\n",
@@ -1783,6 +2023,16 @@
     },
     {
       "program": "array_float",
+      "variant": "handwritten_rv",
+      "input": -1,
+      "expected": "10\n-2\n0\n",
+      "stdout": "10\n-2\n0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
       "variant": "reference_native",
       "input": 0,
       "expected": "10\n1\n1\n",
@@ -1853,6 +2103,16 @@
     },
     {
       "program": "array_float",
+      "variant": "handwritten_rv",
+      "input": 0,
+      "expected": "10\n1\n1\n",
+      "stdout": "10\n1\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
       "variant": "reference_native",
       "input": 2,
       "expected": "10\n7\n1\n",
@@ -1923,6 +2183,16 @@
     },
     {
       "program": "array_float",
+      "variant": "handwritten_rv",
+      "input": 2,
+      "expected": "10\n7\n1\n",
+      "stdout": "10\n7\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "array_float",
       "variant": "reference_native",
       "input": 7,
       "expected": "10\n22\n1\n",
@@ -1992,6 +2262,16 @@
       "passed": true
     },
     {
+      "program": "array_float",
+      "variant": "handwritten_rv",
+      "input": 7,
+      "expected": "10\n22\n1\n",
+      "stdout": "10\n22\n1\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
       "program": "promote_demo",
       "variant": "reference_native",
       "input": -3,
@@ -2063,6 +2343,16 @@
     },
     {
       "program": "promote_demo",
+      "variant": "handwritten_rv",
+      "input": -3,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
       "variant": "reference_native",
       "input": 0,
       "expected": "0\n",
@@ -2124,6 +2414,16 @@
     {
       "program": "promote_demo",
       "variant": "ir_lli",
+      "input": 0,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "handwritten_rv",
       "input": 0,
       "expected": "0\n",
       "stdout": "0\n",
@@ -2194,6 +2494,16 @@
     {
       "program": "promote_demo",
       "variant": "ir_lli",
+      "input": 1,
+      "expected": "0\n",
+      "stdout": "0\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "handwritten_rv",
       "input": 1,
       "expected": "0\n",
       "stdout": "0\n",
@@ -2264,6 +2574,16 @@
     {
       "program": "promote_demo",
       "variant": "ir_lli",
+      "input": 5,
+      "expected": "10\n",
+      "stdout": "10\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "handwritten_rv",
       "input": 5,
       "expected": "10\n",
       "stdout": "10\n",
@@ -2334,6 +2654,16 @@
     {
       "program": "promote_demo",
       "variant": "ir_lli",
+      "input": 10,
+      "expected": "45\n",
+      "stdout": "45\n",
+      "stderr": "",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "program": "promote_demo",
+      "variant": "handwritten_rv",
       "input": 10,
       "expected": "45\n",
       "stdout": "45\n",

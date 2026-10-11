@@ -6,7 +6,7 @@
 
 ## 目录结构
 
-新增袁煜杰部分见 [llvm_ir/](llvm_ir/README.md) 和 [mlir/](mlir/README.md)，工具版本与本页记录的搭档环境分别保留。六组扩展手写 IR 已通过 236 项检查；搭档扩展手写汇编尚待整合。
+新增袁煜杰部分见 [llvm_ir/](llvm_ir/README.md) 和 [mlir/](mlir/README.md)，工具版本与本页记录的搭档环境分别保留。六组扩展示例已补齐同源手写 IR 与手写汇编，八条执行路径加 mem2reg 共通过 269 项检查。
 
 ```
 prep/

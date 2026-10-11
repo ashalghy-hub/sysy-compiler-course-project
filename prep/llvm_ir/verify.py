@@ -70,6 +70,11 @@ def main():
             execute(['riscv64-linux-gnu-gcc','-static','-march=rv64gc','-mabi=lp64d',asm,runtime,'-o',rvexe])
             variants[f'ir_rv_{level}']=['qemu-riscv64',rvexe]
         variants['ir_lli']=['lli',BUILD/f'{name}_linked.bc']
+        handwritten = BASE/'handwritten'/f'{name}_rv.s'
+        manual_exe = BUILD/f'{name}_handwritten_rv'
+        execute(['riscv64-linux-gnu-gcc','-static','-march=rv64gc','-mabi=lp64d',
+                 handwritten,runtime,'-o',manual_exe])
+        variants['handwritten_rv']=['qemu-riscv64',manual_exe]
         for n in inputs:
             expected=oracle(n)
             for variant,cmd in variants.items():

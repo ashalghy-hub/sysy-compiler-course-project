@@ -243,6 +243,21 @@
   },
   {
     "command": [
+      "riscv64-linux-gnu-gcc",
+      "-static",
+      "-march=rv64gc",
+      "-mabi=lp64d",
+      "prep/llvm_ir/handwritten/arithmetic_rv.s",
+      "prep/manual/sylib.c",
+      "-o",
+      "build/prep-llvm-ir/arithmetic_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/arithmetic_reference"
     ],
     "returncode": 0,
@@ -303,6 +318,15 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/arithmetic_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "1\n7\n-7\n-7\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/arithmetic_reference"
     ],
     "returncode": 0,
@@ -363,6 +387,15 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/arithmetic_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "10\n1\n-1\n-1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/arithmetic_reference"
     ],
     "returncode": 0,
@@ -423,6 +456,15 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/arithmetic_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "13\n0\n0\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/arithmetic_reference"
     ],
     "returncode": 0,
@@ -483,6 +525,15 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/arithmetic_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "16\n-1\n1\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/arithmetic_reference"
     ],
     "returncode": 0,
@@ -543,6 +594,15 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/arithmetic_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "25\n-7\n7\n7\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/arithmetic_reference"
     ],
     "returncode": 0,
@@ -596,6 +656,15 @@
     "command": [
       "lli",
       "build/prep-llvm-ir/arithmetic_linked.bc"
+    ],
+    "returncode": 0,
+    "stdout": "31\n-12\n12\n12\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/arithmetic_handwritten_rv"
     ],
     "returncode": 0,
     "stdout": "31\n-12\n12\n12\n",
@@ -769,242 +838,17 @@
   },
   {
     "command": [
-      "build/prep-llvm-ir/short_circuit_reference"
+      "riscv64-linux-gnu-gcc",
+      "-static",
+      "-march=rv64gc",
+      "-mabi=lp64d",
+      "prep/llvm_ir/handwritten/short_circuit_rv.s",
+      "prep/manual/sylib.c",
+      "-o",
+      "build/prep-llvm-ir/short_circuit_handwritten_rv"
     ],
     "returncode": 0,
-    "stdout": "0\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/short_circuit_reference_rv"
-    ],
-    "returncode": 0,
-    "stdout": "0\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "build/prep-llvm-ir/short_circuit_ir_O0"
-    ],
-    "returncode": 0,
-    "stdout": "0\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/short_circuit_ir_rv_O0"
-    ],
-    "returncode": 0,
-    "stdout": "0\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "build/prep-llvm-ir/short_circuit_ir_O2"
-    ],
-    "returncode": 0,
-    "stdout": "0\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/short_circuit_ir_rv_O2"
-    ],
-    "returncode": 0,
-    "stdout": "0\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "lli",
-      "build/prep-llvm-ir/short_circuit_linked.bc"
-    ],
-    "returncode": 0,
-    "stdout": "0\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "build/prep-llvm-ir/short_circuit_reference"
-    ],
-    "returncode": 0,
-    "stdout": "0\n2\n0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/short_circuit_reference_rv"
-    ],
-    "returncode": 0,
-    "stdout": "0\n2\n0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "build/prep-llvm-ir/short_circuit_ir_O0"
-    ],
-    "returncode": 0,
-    "stdout": "0\n2\n0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/short_circuit_ir_rv_O0"
-    ],
-    "returncode": 0,
-    "stdout": "0\n2\n0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "build/prep-llvm-ir/short_circuit_ir_O2"
-    ],
-    "returncode": 0,
-    "stdout": "0\n2\n0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/short_circuit_ir_rv_O2"
-    ],
-    "returncode": 0,
-    "stdout": "0\n2\n0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "lli",
-      "build/prep-llvm-ir/short_circuit_linked.bc"
-    ],
-    "returncode": 0,
-    "stdout": "0\n2\n0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "build/prep-llvm-ir/short_circuit_reference"
-    ],
-    "returncode": 0,
-    "stdout": "1\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/short_circuit_reference_rv"
-    ],
-    "returncode": 0,
-    "stdout": "1\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "build/prep-llvm-ir/short_circuit_ir_O0"
-    ],
-    "returncode": 0,
-    "stdout": "1\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/short_circuit_ir_rv_O0"
-    ],
-    "returncode": 0,
-    "stdout": "1\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "build/prep-llvm-ir/short_circuit_ir_O2"
-    ],
-    "returncode": 0,
-    "stdout": "1\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/short_circuit_ir_rv_O2"
-    ],
-    "returncode": 0,
-    "stdout": "1\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "lli",
-      "build/prep-llvm-ir/short_circuit_linked.bc"
-    ],
-    "returncode": 0,
-    "stdout": "1\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "build/prep-llvm-ir/short_circuit_reference"
-    ],
-    "returncode": 0,
-    "stdout": "1\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/short_circuit_reference_rv"
-    ],
-    "returncode": 0,
-    "stdout": "1\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "build/prep-llvm-ir/short_circuit_ir_O0"
-    ],
-    "returncode": 0,
-    "stdout": "1\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/short_circuit_ir_rv_O0"
-    ],
-    "returncode": 0,
-    "stdout": "1\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "build/prep-llvm-ir/short_circuit_ir_O2"
-    ],
-    "returncode": 0,
-    "stdout": "1\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/short_circuit_ir_rv_O2"
-    ],
-    "returncode": 0,
-    "stdout": "1\n2\n1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "lli",
-      "build/prep-llvm-ir/short_circuit_linked.bc"
-    ],
-    "returncode": 0,
-    "stdout": "1\n2\n1\n",
+    "stdout": "",
     "stderr": ""
   },
   {
@@ -1069,6 +913,222 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/short_circuit_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "0\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/short_circuit_reference"
+    ],
+    "returncode": 0,
+    "stdout": "0\n2\n0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/short_circuit_reference_rv"
+    ],
+    "returncode": 0,
+    "stdout": "0\n2\n0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/short_circuit_ir_O0"
+    ],
+    "returncode": 0,
+    "stdout": "0\n2\n0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/short_circuit_ir_rv_O0"
+    ],
+    "returncode": 0,
+    "stdout": "0\n2\n0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/short_circuit_ir_O2"
+    ],
+    "returncode": 0,
+    "stdout": "0\n2\n0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/short_circuit_ir_rv_O2"
+    ],
+    "returncode": 0,
+    "stdout": "0\n2\n0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "lli",
+      "build/prep-llvm-ir/short_circuit_linked.bc"
+    ],
+    "returncode": 0,
+    "stdout": "0\n2\n0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/short_circuit_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "0\n2\n0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/short_circuit_reference"
+    ],
+    "returncode": 0,
+    "stdout": "1\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/short_circuit_reference_rv"
+    ],
+    "returncode": 0,
+    "stdout": "1\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/short_circuit_ir_O0"
+    ],
+    "returncode": 0,
+    "stdout": "1\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/short_circuit_ir_rv_O0"
+    ],
+    "returncode": 0,
+    "stdout": "1\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/short_circuit_ir_O2"
+    ],
+    "returncode": 0,
+    "stdout": "1\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/short_circuit_ir_rv_O2"
+    ],
+    "returncode": 0,
+    "stdout": "1\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "lli",
+      "build/prep-llvm-ir/short_circuit_linked.bc"
+    ],
+    "returncode": 0,
+    "stdout": "1\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/short_circuit_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "1\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/short_circuit_reference"
+    ],
+    "returncode": 0,
+    "stdout": "1\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/short_circuit_reference_rv"
+    ],
+    "returncode": 0,
+    "stdout": "1\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/short_circuit_ir_O0"
+    ],
+    "returncode": 0,
+    "stdout": "1\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/short_circuit_ir_rv_O0"
+    ],
+    "returncode": 0,
+    "stdout": "1\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/short_circuit_ir_O2"
+    ],
+    "returncode": 0,
+    "stdout": "1\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/short_circuit_ir_rv_O2"
+    ],
+    "returncode": 0,
+    "stdout": "1\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "lli",
+      "build/prep-llvm-ir/short_circuit_linked.bc"
+    ],
+    "returncode": 0,
+    "stdout": "1\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/short_circuit_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "1\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/short_circuit_reference"
     ],
     "returncode": 0,
@@ -1122,6 +1182,84 @@
     "command": [
       "lli",
       "build/prep-llvm-ir/short_circuit_linked.bc"
+    ],
+    "returncode": 0,
+    "stdout": "0\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/short_circuit_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "0\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/short_circuit_reference"
+    ],
+    "returncode": 0,
+    "stdout": "0\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/short_circuit_reference_rv"
+    ],
+    "returncode": 0,
+    "stdout": "0\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/short_circuit_ir_O0"
+    ],
+    "returncode": 0,
+    "stdout": "0\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/short_circuit_ir_rv_O0"
+    ],
+    "returncode": 0,
+    "stdout": "0\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/short_circuit_ir_O2"
+    ],
+    "returncode": 0,
+    "stdout": "0\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/short_circuit_ir_rv_O2"
+    ],
+    "returncode": 0,
+    "stdout": "0\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "lli",
+      "build/prep-llvm-ir/short_circuit_linked.bc"
+    ],
+    "returncode": 0,
+    "stdout": "0\n2\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/short_circuit_handwritten_rv"
     ],
     "returncode": 0,
     "stdout": "0\n2\n1\n",
@@ -1295,62 +1433,17 @@
   },
   {
     "command": [
-      "build/prep-llvm-ir/loop_control_reference"
+      "riscv64-linux-gnu-gcc",
+      "-static",
+      "-march=rv64gc",
+      "-mabi=lp64d",
+      "prep/llvm_ir/handwritten/loop_control_rv.s",
+      "prep/manual/sylib.c",
+      "-o",
+      "build/prep-llvm-ir/loop_control_handwritten_rv"
     ],
     "returncode": 0,
-    "stdout": "0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/loop_control_reference_rv"
-    ],
-    "returncode": 0,
-    "stdout": "0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "build/prep-llvm-ir/loop_control_ir_O0"
-    ],
-    "returncode": 0,
-    "stdout": "0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/loop_control_ir_rv_O0"
-    ],
-    "returncode": 0,
-    "stdout": "0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "build/prep-llvm-ir/loop_control_ir_O2"
-    ],
-    "returncode": 0,
-    "stdout": "0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/loop_control_ir_rv_O2"
-    ],
-    "returncode": 0,
-    "stdout": "0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "lli",
-      "build/prep-llvm-ir/loop_control_linked.bc"
-    ],
-    "returncode": 0,
-    "stdout": "0\n",
+    "stdout": "",
     "stderr": ""
   },
   {
@@ -1415,6 +1508,84 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/loop_control_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/loop_control_reference"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/loop_control_reference_rv"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/loop_control_ir_O0"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/loop_control_ir_rv_O0"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/loop_control_ir_O2"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/loop_control_ir_rv_O2"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "lli",
+      "build/prep-llvm-ir/loop_control_linked.bc"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/loop_control_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/loop_control_reference"
     ],
     "returncode": 0,
@@ -1475,6 +1646,15 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/loop_control_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/loop_control_reference"
     ],
     "returncode": 0,
@@ -1535,6 +1715,15 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/loop_control_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/loop_control_reference"
     ],
     "returncode": 0,
@@ -1595,6 +1784,15 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/loop_control_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "13\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/loop_control_reference"
     ],
     "returncode": 0,
@@ -1648,6 +1846,15 @@
     "command": [
       "lli",
       "build/prep-llvm-ir/loop_control_linked.bc"
+    ],
+    "returncode": 0,
+    "stdout": "13\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/loop_control_handwritten_rv"
     ],
     "returncode": 0,
     "stdout": "13\n",
@@ -1821,62 +2028,17 @@
   },
   {
     "command": [
-      "build/prep-llvm-ir/functions_reference"
+      "riscv64-linux-gnu-gcc",
+      "-static",
+      "-march=rv64gc",
+      "-mabi=lp64d",
+      "prep/llvm_ir/handwritten/functions_rv.s",
+      "prep/manual/sylib.c",
+      "-o",
+      "build/prep-llvm-ir/functions_handwritten_rv"
     ],
     "returncode": 0,
-    "stdout": "1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/functions_reference_rv"
-    ],
-    "returncode": 0,
-    "stdout": "1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "build/prep-llvm-ir/functions_ir_O0"
-    ],
-    "returncode": 0,
-    "stdout": "1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/functions_ir_rv_O0"
-    ],
-    "returncode": 0,
-    "stdout": "1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "build/prep-llvm-ir/functions_ir_O2"
-    ],
-    "returncode": 0,
-    "stdout": "1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/functions_ir_rv_O2"
-    ],
-    "returncode": 0,
-    "stdout": "1\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "lli",
-      "build/prep-llvm-ir/functions_linked.bc"
-    ],
-    "returncode": 0,
-    "stdout": "1\n",
+    "stdout": "",
     "stderr": ""
   },
   {
@@ -1941,6 +2103,84 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/functions_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/functions_reference"
+    ],
+    "returncode": 0,
+    "stdout": "1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/functions_reference_rv"
+    ],
+    "returncode": 0,
+    "stdout": "1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/functions_ir_O0"
+    ],
+    "returncode": 0,
+    "stdout": "1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/functions_ir_rv_O0"
+    ],
+    "returncode": 0,
+    "stdout": "1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/functions_ir_O2"
+    ],
+    "returncode": 0,
+    "stdout": "1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/functions_ir_rv_O2"
+    ],
+    "returncode": 0,
+    "stdout": "1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "lli",
+      "build/prep-llvm-ir/functions_linked.bc"
+    ],
+    "returncode": 0,
+    "stdout": "1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/functions_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/functions_reference"
     ],
     "returncode": 0,
@@ -2001,6 +2241,15 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/functions_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "120\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/functions_reference"
     ],
     "returncode": 0,
@@ -2061,6 +2310,15 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/functions_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "5040\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/functions_reference"
     ],
     "returncode": 0,
@@ -2114,6 +2372,15 @@
     "command": [
       "lli",
       "build/prep-llvm-ir/functions_linked.bc"
+    ],
+    "returncode": 0,
+    "stdout": "479001600\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/functions_handwritten_rv"
     ],
     "returncode": 0,
     "stdout": "479001600\n",
@@ -2287,6 +2554,21 @@
   },
   {
     "command": [
+      "riscv64-linux-gnu-gcc",
+      "-static",
+      "-march=rv64gc",
+      "-mabi=lp64d",
+      "prep/llvm_ir/handwritten/array_float_rv.s",
+      "prep/manual/sylib.c",
+      "-o",
+      "build/prep-llvm-ir/array_float_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/array_float_reference"
     ],
     "returncode": 0,
@@ -2347,6 +2629,15 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/array_float_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "10\n-8\n0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/array_float_reference"
     ],
     "returncode": 0,
@@ -2407,6 +2698,15 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/array_float_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "10\n-2\n0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/array_float_reference"
     ],
     "returncode": 0,
@@ -2467,6 +2767,15 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/array_float_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "10\n1\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/array_float_reference"
     ],
     "returncode": 0,
@@ -2527,6 +2836,15 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/array_float_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "10\n7\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/array_float_reference"
     ],
     "returncode": 0,
@@ -2580,6 +2898,15 @@
     "command": [
       "lli",
       "build/prep-llvm-ir/array_float_linked.bc"
+    ],
+    "returncode": 0,
+    "stdout": "10\n22\n1\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/array_float_handwritten_rv"
     ],
     "returncode": 0,
     "stdout": "10\n22\n1\n",
@@ -2753,62 +3080,17 @@
   },
   {
     "command": [
-      "build/prep-llvm-ir/promote_demo_reference"
+      "riscv64-linux-gnu-gcc",
+      "-static",
+      "-march=rv64gc",
+      "-mabi=lp64d",
+      "prep/llvm_ir/handwritten/promote_demo_rv.s",
+      "prep/manual/sylib.c",
+      "-o",
+      "build/prep-llvm-ir/promote_demo_handwritten_rv"
     ],
     "returncode": 0,
-    "stdout": "0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/promote_demo_reference_rv"
-    ],
-    "returncode": 0,
-    "stdout": "0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "build/prep-llvm-ir/promote_demo_ir_O0"
-    ],
-    "returncode": 0,
-    "stdout": "0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/promote_demo_ir_rv_O0"
-    ],
-    "returncode": 0,
-    "stdout": "0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "build/prep-llvm-ir/promote_demo_ir_O2"
-    ],
-    "returncode": 0,
-    "stdout": "0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "qemu-riscv64",
-      "build/prep-llvm-ir/promote_demo_ir_rv_O2"
-    ],
-    "returncode": 0,
-    "stdout": "0\n",
-    "stderr": ""
-  },
-  {
-    "command": [
-      "lli",
-      "build/prep-llvm-ir/promote_demo_linked.bc"
-    ],
-    "returncode": 0,
-    "stdout": "0\n",
+    "stdout": "",
     "stderr": ""
   },
   {
@@ -2873,6 +3155,15 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/promote_demo_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/promote_demo_reference"
     ],
     "returncode": 0,
@@ -2933,6 +3224,84 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/promote_demo_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/promote_demo_reference"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/promote_demo_reference_rv"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/promote_demo_ir_O0"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/promote_demo_ir_rv_O0"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "build/prep-llvm-ir/promote_demo_ir_O2"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/promote_demo_ir_rv_O2"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "lli",
+      "build/prep-llvm-ir/promote_demo_linked.bc"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/promote_demo_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/promote_demo_reference"
     ],
     "returncode": 0,
@@ -2993,6 +3362,15 @@
   },
   {
     "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/promote_demo_handwritten_rv"
+    ],
+    "returncode": 0,
+    "stdout": "10\n",
+    "stderr": ""
+  },
+  {
+    "command": [
       "build/prep-llvm-ir/promote_demo_reference"
     ],
     "returncode": 0,
@@ -3046,6 +3424,15 @@
     "command": [
       "lli",
       "build/prep-llvm-ir/promote_demo_linked.bc"
+    ],
+    "returncode": 0,
+    "stdout": "45\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "qemu-riscv64",
+      "build/prep-llvm-ir/promote_demo_handwritten_rv"
     ],
     "returncode": 0,
     "stdout": "45\n",
